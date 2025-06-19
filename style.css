@@ -1,0 +1,138 @@
+body {
+  font-family: monospace;
+  background: #0e0e0e;
+  color: #e0e0e0;
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+}
+
+header {
+  background: #111;
+  padding: 2rem;
+  text-align: center;
+  border-bottom: 1px solid #333;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+header p {
+  font-size: 1rem;
+  color: #aaa;
+}
+
+main {
+  max-width: 700px;
+  margin: auto;
+  padding: 2rem;
+}
+
+article {
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px dashed #444;
+}
+
+article h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+article h2 a {
+  color: #66d9ef;
+  text-decoration: none;
+}
+
+article .date {
+  font-size: 0.9rem;
+  color: #888;
+}
+
+footer {
+  text-align: center;
+  padding: 1rem;
+  border-top: 1px solid #333;
+  font-size: 0.9rem;
+  background: #111;
+}
+.header-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.dp {
+  width: 120px;
+  height: 120px;
+  border-radius: 80%;
+  border: 2px solid #444;
+  object-fit: cover;
+}
+
+
+.social-icons {
+  margin-top: 0.5rem;
+}
+
+.social-icons a {
+  display: inline-block;
+  margin-right: 0.5rem;
+}
+
+.social-icons img {
+  width: 20px;
+  height: 20px;
+  opacity: 0.8;
+  transition: opacity 0.3s;
+}
+
+.social-icons img:hover {
+  opacity: 1;
+}
+.container {
+  display: flex;
+  max-width: 1200px;
+  margin: auto;
+  padding: 2rem;
+  gap: 2rem;
+}
+
+.sidebar {
+  width: 200px;
+  background: #111;
+  border: 1px solid #333;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.sidebar h3 {
+  margin-top: 0;
+  color: #66d9ef;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar li {
+  margin: 0.5rem 0;
+}
+
+.sidebar a {
+  color: #ccc;
+  text-decoration: none;
+}
+
+.sidebar a:hover {
+  color: #fff;
+}
+
+.blog {
+  flex: 1;
+}
