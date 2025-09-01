@@ -1,0 +1,6 @@
+title: My Hacker Blog
+description: Collection of my past projects
+theme: jekyll-theme-hacker
+
+plugins:
+  - jekyll-feed
