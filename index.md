@@ -3,7 +3,7 @@ layout: default
 title: Home
 ---
 
-# 👾 My Hacker Blog
+# Hello hacker's welcome to my blog's
 
 <ul>
   {% for post in site.posts %}
