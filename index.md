@@ -3,20 +3,36 @@ layout: default
 title: Home
 ---
 
-# Hey, I’m Pratham
+# 👋 Welcome to 0x3xploit  
 
-I’m a reverse engineer, low-level programmer, and exploit developer who loves breaking binaries apart and understanding how they tick. Most of my projects revolve around:
+Hey, I’m **Pratham** – a reverse engineer, exploit dev, and CTF player with [pwn0rDi3](https://ctftime.org/team/XXXXX).  
+This site is my collection of **writeups, projects, and notes** on:  
+- 🔹 Reverse Engineering  
+- 🔹 Binary Exploitation (pwn)  
+- 🔹 Malware Analysis  
+- 🔹 Security Research  
 
-- ## Malware Reverse Engineering – digging into samples, studying behaviors, and building tools to make analysis easier.  
-- System-level Exploitation – buffer overflows, heap tricks, kernel drivers, and custom challenges.  
-- Binary Tools – packers, ELF/DLL analyzers, and sandboxes to safely run untrusted code.  
-- Game & Mobile Internals – JNI hooks, native library tracing, and experiments with Android.  
+---
 
-I like building small but sharp tools – things that make CTFs, reversing, and security research more practical and fun.  
+## 🔥 Latest Writeups
+{% for post in site.posts limit:5 %}
+- 📄 [{{ post.title }}]({{ post.url }}) <small>({{ post.date | date: "%b %d, %Y" }})</small>
+{% endfor %}
 
-Currently working on:  
-- A lightweight ELF sandbox with `seccomp`, `ptrace`, and `chroot`.  
-- Custom hooking frameworks for Android native libraries.  
-- Exploitation practice with QEMU and weird architectures (MIPS/ARM).  
+➡️ [View all writeups](/writeups/)  
 
-When I’m not coding, I’m probably breaking something in a VM, setting up CTF infra for my team **pwn0rDi3**, or learning something new at the assembly/kernel level.  
+---
+
+## 🛠 Projects
+- 🐧 **ELF Sandbox** – a minimal Linux ELF sandbox using seccomp, chroot, ptrace  
+- 🪲 **Packer** – custom XOR/AES packer for ELF/PE binaries  
+- 📱 **Android Hooker** – JNI/native function hooker for Android  
+
+---
+
+## 📫 Contact
+- GitHub: [0x3xploit](https://github.com/0x3xploit)  
+- Twitter/X: [@0x3xploit](https://twitter.com/0x3xploit)  
+- Email: pratham[at]example.com  
+
+---
