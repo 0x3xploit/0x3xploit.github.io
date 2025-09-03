@@ -5,7 +5,7 @@ title: Home
 
 # 👋 Welcome to 0x3xploit  
 
-Hey, I’m **Pratham** – a reverse engineer, exploit dev, and CTF player with [pwn0rDi3](https://ctftime.org/team/XXXXX).  
+Hey, I’m **Pratham** – a reverse engineer, exploit dev, and CTF player with [pwn0rDi3](https://ctftime.org/team/390601).  
 This site is my collection of **writeups, projects, and notes** on:  
 - 🔹 Reverse Engineering  
 - 🔹 Binary Exploitation (pwn)  
