@@ -1,0 +1,222 @@
+/* Man Page Style - Zero Distraction */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: monospace;
+    background: #fff;
+    color: #000;
+    line-height: 1.6;
+    font-size: 14px;
+    max-width: 120ch;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+h1 {
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin: 1.5rem 0 0.5rem;
+}
+
+h2 {
+    font-size: 1rem;
+    font-weight: bold;
+    margin: 1.5rem 0 0.5rem;
+}
+
+h3 {
+    font-size: 1rem;
+    font-weight: bold;
+    text-decoration: underline;
+    margin: 1rem 0 0.5rem;
+}
+
+p {
+    margin: 0.5rem 0;
+}
+
+a {
+    color: #021aa3;
+    text-decoration: underline;
+}
+
+pre {
+    margin: 1rem 0;
+    overflow-x: auto;
+    border: 2px solid #000;
+    padding: 1rem;
+    background: #f5f5f5;
+}
+
+pre code {
+    background: none;
+}
+
+ul, ol {
+    margin: 0.5rem 0 0.5rem 2rem;
+}
+
+li {
+    margin: 0.2rem 0;
+}
+
+.header {
+    margin-bottom: 2rem;
+}
+
+.header nav a {
+    margin-right: 1rem;
+}
+
+.post {
+    margin: 1.5rem 0;
+}
+
+.footer {
+    margin-top: 3rem;
+    padding-top: 1rem;
+    border-top: 1px solid #000;
+}
+
+/* ===================================
+   RESPONSIVE DESIGN
+   Mobile, Tablet, Desktop
+   =================================== */
+
+/* Desktop (default - already set above) */
+/* No changes needed, 80ch max-width works great */
+
+/* Tablet (768px - 1024px) */
+@media (max-width: 1024px) {
+    body {
+        max-width: 90ch;
+        padding: 1.5rem 1rem;
+        font-size: 14px;
+    }
+}
+
+/* Tablet Portrait & Large Phones (481px - 768px) */
+@media (max-width: 768px) {
+    body {
+        max-width: 100%;
+        padding: 1rem 0.75rem;
+        font-size: 14px;
+    }
+
+    h1 {
+        font-size: 0.95rem;
+    }
+
+    h2 {
+        font-size: 0.95rem;
+    }
+
+    .header nav a {
+        margin-right: 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    pre {
+        padding: 0.75rem;
+        font-size: 0.85rem;
+        overflow-x: auto;
+    }
+
+    /* Make code blocks scrollable on mobile */
+    pre code {
+        white-space: pre;
+        word-wrap: normal;
+    }
+}
+
+/* Mobile (up to 480px) */
+@media (max-width: 480px) {
+    body {
+        padding: 0.75rem 0.5rem;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    h1 {
+        font-size: 0.9rem;
+    }
+
+    h2 {
+        font-size: 0.9rem;
+        margin: 1rem 0 0.5rem;
+    }
+
+    h3 {
+        font-size: 0.85rem;
+    }
+
+    .header {
+        margin-bottom: 1rem;
+    }
+
+    .header nav {
+        display: block;
+        margin-top: 0.5rem;
+    }
+
+    .header nav a {
+        display: inline-block;
+        margin-right: 0.5rem;
+        margin-bottom: 0.25rem;
+        font-size: 0.85rem;
+    }
+
+    pre {
+        padding: 0.5rem;
+        font-size: 0.8rem;
+        margin: 0.75rem 0;
+        border-width: 1px;
+    }
+
+    ul, ol {
+        margin-left: 1.25rem;
+    }
+
+    .post {
+        margin: 1rem 0;
+    }
+
+    .post-meta {
+        font-size: 0.8rem;
+    }
+
+    .footer {
+        margin-top: 2rem;
+        font-size: 0.85rem;
+    }
+}
+
+/* Extra Small Mobile (up to 360px) */
+@media (max-width: 360px) {
+    body {
+        font-size: 12px;
+        padding: 0.5rem;
+    }
+
+    pre {
+        font-size: 0.75rem;
+        padding: 0.4rem;
+    }
+}
+
+/* Landscape Mode on Mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+    body {
+        padding: 0.5rem;
+    }
+
+    .header {
+        margin-bottom: 0.75rem;
+    }
+}

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEMORY-ALLOCATOR(1)</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+    <style>
+        .token.comment { color: #708090; font-style: italic; }
+        .token.keyword { color: #000; font-weight: bold; }
+        .token.function { color: #000; }
+        .token.string { color: #666; }
+        .token.number { color: #000; }
+        .token.operator { color: #000; }
+        .token.class-name { color: #000; font-weight: bold; }
+        .token.builtin { color: #000; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>MEMORY-ALLOCATOR(1)</h1>
+    <nav><a href="../index.html">home</a> <a href="../blog.html">posts</a></nav>
+</div>
+
+<div class="article-header">
+    <div class="article-meta">2024-02-10 | memory | 12 min read</div>
+    <h1 class="article-title">BUILDING A CUSTOM MEMORY ALLOCATOR IN C++</h1>
+</div>
+
+<h2>SYNOPSIS</h2>
+<p>
+Implementing a high-performance arena allocator from scratch to reduce 
+fragmentation and improve allocation performance for specific use cases.
+</p>
+
+<h2>DESCRIPTION</h2>
+<p>
+The default memory allocator (malloc/free or new/delete) is designed to be 
+general-purpose, making trade-offs that might not be optimal for specific 
+use cases. Custom allocators allow you to:
+</p>
+
+<ul>
+    <li>Reduce fragmentation for specific allocation patterns</li>
+    <li>Improve cache locality by controlling memory layout</li>
+    <li>Eliminate per-allocation overhead</li>
+    <li>Batch allocations and deallocations</li>
+    <li>Track memory usage with fine granularity</li>
+</ul>
+
+<p>
+An arena allocator (region-based allocator) works by requesting large blocks 
+of memory from the system and doling out chunks from these blocks. When done 
+with all allocations, you free the entire arena at once.
+</p>
+
+<h2>IMPLEMENTATION</h2>
+
+<h3>Basic Structure</h3>
+
+<pre><code class="language-cpp">class ArenaAllocator {
+private:
+    struct Block {
+        std::byte* memory;
+        size_t size;
+        size_t used;
+        Block* next;
+    };
+
+    Block* current_block;
+    size_t default_block_size;
+    size_t total_allocated;
+
+public:
+    explicit ArenaAllocator(size_t block_size = 1024 * 1024)
+        : current_block(nullptr)
+        , default_block_size(block_size)
+        , total_allocated(0) {
+    }
+
+    ~ArenaAllocator() {
+        reset();
+    }
+
+    void* allocate(size_t size, size_t alignment);
+    void reset();
+};</code></pre>
+
+<h3>Alignment</h3>
+
+<p>
+Proper alignment is crucial for performance and correctness. Many CPU 
+architectures require certain data types to be aligned to specific boundaries.
+</p>
+
+<pre><code class="language-cpp">static std::byte* align_pointer(std::byte* ptr, size_t alignment) {
+    auto addr = reinterpret_cast&lt;uintptr_t&gt;(ptr);
+    auto aligned = (addr + alignment - 1) & ~(alignment - 1);
+    return reinterpret_cast&lt;std::byte*&gt;(aligned);
+}
+
+static size_t alignment_padding(std::byte* ptr, size_t alignment) {
+    return align_pointer(ptr, alignment) - ptr;
+}</code></pre>
+
+<h3>Allocation Logic</h3>
+
+<pre><code class="language-cpp">void* ArenaAllocator::allocate(size_t size, size_t alignment) {
+    if (size == 0) return nullptr;
+
+    if (!current_block) {
+        size_t block_size = std::max(default_block_size, size + alignment);
+        current_block = allocate_block(block_size);
+    }
+
+    std::byte* current_ptr = current_block-&gt;memory + current_block-&gt;used;
+    size_t padding = alignment_padding(current_ptr, alignment);
+    size_t required = size + padding;
+
+    if (current_block-&gt;used + required &gt; current_block-&gt;size) {
+        size_t block_size = std::max(default_block_size, required);
+        Block* new_block = allocate_block(block_size);
+        new_block-&gt;next = current_block;
+        current_block = new_block;
+        current_ptr = current_block-&gt;memory;
+        padding = 0;
+        required = size;
+    }
+
+    void* result = current_block-&gt;memory + current_block-&gt;used + padding;
+    current_block-&gt;used += required;
+    return result;
+}</code></pre>
+
+<h3>Cleanup</h3>
+
+<pre><code class="language-cpp">void ArenaAllocator::reset() {
+    Block* block = current_block;
+    while (block) {
+        Block* next = block-&gt;next;
+        ::operator delete(block);
+        block = next;
+    }
+    current_block = nullptr;
+    total_allocated = 0;
+}</code></pre>
+
+<h2>BENCHMARKS</h2>
+
+<pre><code class="language-cpp">// Test with default allocator
+for (int i = 0; i &lt; 100000; ++i) {
+    objects.push_back(new TestObject{});
+}
+for (auto* obj : objects) {
+    delete obj;
+}
+// Time: ~45ms
+
+// Test with arena allocator
+ArenaAllocator arena;
+for (int i = 0; i &lt; 100000; ++i) {
+    auto* obj = static_cast&lt;TestObject*&gt;(arena.allocate(sizeof(TestObject)));
+    arena_objects.push_back(obj);
+}
+arena.reset();
+// Time: ~8ms (5-6x faster)</code></pre>
+
+<h2>USE CASES</h2>
+
+<ul>
+    <li>Game frame allocations - allocate per frame, reset between frames</li>
+    <li>Parser/compiler ASTs - build syntax trees, process, then discard</li>
+    <li>Request handling - allocate per-request data, free after completion</li>
+    <li>String interning - allocate strings for program lifetime</li>
+</ul>
+
+<h2>NOTES</h2>
+
+<p>
+Arena allocators do not support individual deallocations. You free all memory 
+at once by calling reset(). This limitation is also its strength - zero 
+per-allocation overhead.
+</p>
+
+<p>
+The alignment calculation uses bit-masking for power-of-2 alignments:
+(addr + alignment - 1) & ~(alignment - 1) rounds up to the next aligned address.
+</p>
+
+<p>
+Bump allocation is extremely fast - just a pointer addition and bounds check.
+</p>
+
+<h2>SEE ALSO</h2>
+
+<p>
+malloc(3), free(3), operator new, pool allocators, stack allocators
+</p>
+
+<div class="footer">
+    <p><a href="../blog.html">back to posts</a></p>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-asm6502.min.js"></script>
+
+</body>
+</html>
