@@ -4,18 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MEMORY-EXPLOITS(1)</title>
+
     <link rel="stylesheet" href="../styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
-    <style>
-        .token.comment { color: #708090; font-style: italic; }
-        .token.keyword { color: #000; font-weight: bold; }
-        .token.function { color: #000; }
-        .token.string { color: #666; }
-        .token.number { color: #000; }
-        .token.operator { color: #000; }
-        .token.class-name { color: #000; font-weight: bold; }
-        .token.builtin { color: #000; font-weight: bold; }
-    </style>
+
+    <!-- Highlight.js CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/styles/default.min.css" />
+
 </head>
 <body>
 
@@ -31,148 +25,125 @@
 
 <h2>SYNOPSIS</h2>
 <p>
-Understanding how memory corruption bugs turn into exploits, without drowning 
-in theory or unnecessary complexity.
+Memory exploitation without the unnecessary mystique — just the fundamentals 
+you actually need to understand what’s happening.
 </p>
 
 <h2>DESCRIPTION</h2>
 <p>
-Memory exploitation often sounds intimidating. Fancy terms, weird crashes, 
-assembly everywhere — it can feel like a black art.
+Memory exploitation has a reputation for being complicated, obscure, and 
+borderline magical.
 </p>
 
 <p>
-But at its core, memory exploitation is surprisingly logical.
+In reality, it's mostly about one thing:
 </p>
 
 <p>
-A program trusts memory.  
-A bug breaks that trust.  
-An attacker abuses the confusion.
+<strong>Programs trusting memory they shouldn’t trust.</strong>
 </p>
 
 <p>
-That’s really it.
+When that trust breaks, weird things start happening — crashes, corrupted 
+data, unexpected behavior. Exploitation is simply learning how to steer that 
+weirdness.
 </p>
 
-<h2>WHY MEMORY BUGS MATTER</h2>
+<h2>WHY MEMORY BUGS EXIST</h2>
 <p>
-Most low-level vulnerabilities come from one simple problem:
+At low levels, nothing automatically protects you from mistakes.
 </p>
 
 <ul>
-    <li>Writing data where it shouldn't go</li>
-    <li>Reading data that shouldn't be accessible</li>
-    <li>Using memory that is no longer valid</li>
+    <li>Write past a buffer → memory corruption</li>
+    <li>Use freed memory → undefined behavior</li>
+    <li>Trust user input → chaos</li>
 </ul>
 
 <p>
-Computers don’t magically protect you from mistakes. If a program messes up 
-memory handling, the CPU happily executes the chaos.
+The CPU doesn’t care about programmer intentions.
 </p>
 
 <h2>CLASSIC EXAMPLE — BUFFER OVERFLOW</h2>
 
-<pre><code class="language-cpp">void vulnerable() {
+<pre><code class="language-cpp">
+void vulnerable() {
     char buffer[16];
-    gets(buffer);   // 🚩 danger
-}</code></pre>
+    gets(buffer);   // unsafe
+}
+</code></pre>
 
 <p>
-Simple bug. Big consequences.
+Simple bug.
 </p>
 
 <p>
-If we write more than 16 bytes, we overwrite whatever sits next in memory.
-Not random. Not mystical. Just adjacent memory.
+If input exceeds 16 bytes, the program starts overwriting adjacent memory.
+Not random memory — very specific memory.
 </p>
 
 <p>
-Depending on layout, that might be:
+Depending on layout, this might corrupt:
 </p>
 
 <ul>
     <li>Saved registers</li>
     <li>Return addresses</li>
-    <li>Function pointers</li>
+    <li>Control structures</li>
 </ul>
 
 <p>
-Overwrite control data → control execution.
+Once control data is overwritten, execution flow becomes negotiable.
 </p>
 
-<h2>WHAT EXPLOITATION REALLY MEANS</h2>
+<h2>WHAT EXPLOITATION REALLY IS</h2>
 <p>
-Exploitation is not "hacking magic".
-</p>
-
-<p>
-It’s forcing the program into doing something it was never designed to do.
+Forget Hollywood definitions.
 </p>
 
 <p>
-Think of it as:
+Exploitation is forcing a program into executing unintended behavior by 
+manipulating memory state.
 </p>
 
-<ul>
-    <li>Redirecting execution flow</li>
-    <li>Manipulating program logic</li>
-    <li>Abusing incorrect assumptions</li>
-</ul>
+<p>
+No magic. Just logic + patience.
+</p>
 
 <h2>COMMON MEMORY BUG TYPES</h2>
 
 <ul>
-    <li><strong>Buffer Overflow</strong> – Writing past boundaries</li>
-    <li><strong>Use-After-Free</strong> – Using dead memory</li>
-    <li><strong>Double Free</strong> – Freeing memory twice</li>
-    <li><strong>Heap Overflow</strong> – Corrupting heap metadata</li>
-    <li><strong>Out-of-Bounds Read</strong> – Leaking memory</li>
+    <li><strong>Buffer Overflow</strong> – Writing beyond boundaries</li>
+    <li><strong>Heap Overflow</strong> – Corrupting heap structures</li>
+    <li><strong>Use-After-Free</strong> – Accessing invalid memory</li>
+    <li><strong>Double Free</strong> – Breaking allocator assumptions</li>
+    <li><strong>Out-of-Bounds Read</strong> – Leaking sensitive data</li>
 </ul>
 
 <p>
-Different bugs. Same idea: memory confusion.
+Different mechanics, same root problem: memory misuse.
 </p>
 
-<h2>THE ATTACKER’S MINDSET</h2>
+<h2>THE RIGHT WAY TO THINK</h2>
 <p>
-Beginners often ask:
-</p>
-
-<p>
-"How do you even think about exploiting this?"
+Beginners often focus on payload tricks.
 </p>
 
 <p>
-Answer: stop thinking like a programmer.
-</p>
-
-<p>
-Instead of:
+Better approach:
 </p>
 
 <ul>
-    <li>"What is the program supposed to do?"</li>
+    <li>What assumptions does the program make?</li>
+    <li>What happens when those assumptions fail?</li>
+    <li>What memory influences execution?</li>
 </ul>
 
 <p>
-Ask:
+Memory exploitation is mostly pattern recognition.
 </p>
 
-<ul>
-    <li>"What assumptions does the program make?"</li>
-    <li>"What happens if those assumptions break?"</li>
-    <li>"What data influences control flow?"</li>
-</ul>
-
-<p>
-Memory exploitation is mostly curiosity + persistence.
-</p>
-
-<h2>REALITY CHECK</h2>
-<p>
-Modern systems include protections:
-</p>
+<h2>MODERN DEFENSES</h2>
 
 <ul>
     <li>ASLR</li>
@@ -182,37 +153,35 @@ Modern systems include protections:
 </ul>
 
 <p>
-These don’t make exploitation impossible.
-They just make sloppy exploitation impossible.
+These don’t stop exploitation — they punish sloppy exploitation.
 </p>
 
-<h2>WHAT YOU SHOULD FOCUS ON FIRST</h2>
+<h2>WHAT TO LEARN FIRST</h2>
 
 <ul>
-    <li>Understand memory layout (stack vs heap)</li>
-    <li>Learn how function calls work</li>
-    <li>Get comfortable reading crashes</li>
-    <li>Play with vulnerable binaries</li>
-    <li>Break things intentionally</li>
+    <li>Stack vs Heap layout</li>
+    <li>Function call mechanics</li>
+    <li>Debugger workflows</li>
+    <li>Crash analysis</li>
+    <li>Allocator behavior</li>
 </ul>
 
 <p>
-Theory helps, but hands-on debugging teaches faster.
+Hands-on debugging beats theory every time.
 </p>
 
 <h2>NOTES</h2>
 <p>
-Memory exploitation is less about memorizing tricks and more about developing 
-intuition.
+Crashes are not failures.
 </p>
 
 <p>
-Crashes are not failures.  
-Crashes are feedback.
+Crashes are signals.
 </p>
 
 <p>
-Every weird behavior is the program telling you something about its memory.
+Every crash tells you something about memory layout, boundaries, or program 
+assumptions.
 </p>
 
 <h2>SEE ALSO</h2>
@@ -224,27 +193,20 @@ buffer overflows, heap internals, calling conventions, debugger workflows
     <p><a href="../blog.html">back to posts</a></p>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-asm6502.min.js"></script>
+<!-- Highlight.js JS -->
+<script src="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/highlight.min.js"></script>
 
-  <!-- Load highlight.js CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/styles/default.min.css" />
-  <!-- Load highlight.js JS -->
-  <script src="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/highlight.min.js"></script>
-  <!-- Load C++ and JavaScript language support -->
-  <script src="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/languages/cpp.min.js"></script>
-  <script src="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/languages/javascript.min.js"></script>
+<!-- Language Support -->
+<script src="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/languages/cpp.min.js"></script>
+<script src="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/languages/javascript.min.js"></script>
 
- <script>
-    // Initialize syntax highlighting
-    document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('pre code').forEach((block) => {
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('pre code').forEach((block) => {
         hljs.highlightElement(block);
-      });
     });
-  </script>
+});
+</script>
 
 </body>
 </html>
