@@ -3,18 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LOWLEVELLAB(1)</title>
+    <title>0xGR00T</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
 <div class="header">
-    <h1>LOWLEVELLAB(1)</h1>
+    <h1>low level blog's</h1>
     <nav><a href="index.html">home</a> <a href="blog.html">posts</a></nav>
 </div>
 
-<h2>NAME</h2>
-<p>lowlevellab - technical blog on c++, assembly, and memory</p>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Constantly Blinking Browser Tab Title
+    const originalTitle = document.title;
+    setInterval(() => {
+        document.title = document.title === originalTitle ?  originalTitle + ' ▌' : originalTitle;
+    }, 500);
+    
+    
+});
+</script>
+
+<h2>$whoami<span class="cursor">_</span></h2>
+
+<style>
+.cursor {
+    display: inline;
+    margin-left: 4px;
+    animation: blink .75s step-end infinite;
+}
+
+@keyframes blink { 
+    from, to { opacity: 0; } 
+    50% { opacity: 1; } 
+}
+</style>
+
+
+<p style="color: #078007;">
+    low-level bug hunter | memory corruption enthusiast | CTF addict who probably should touch grass more | spends way too much time staring at gdb output and wondering why my exploit crashed again | if it involves breaking things at the binary level, I'm interested | malware reverse engineering when I'm not busy segfaulting | stack smashing is my cardio
+</p>
+
 
 <h2>DESCRIPTION</h2>
 <p>
