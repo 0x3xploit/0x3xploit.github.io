@@ -3,14 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>POSTS(1)</title>
+    <title>me0w bl0gs</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/gif" href="favicon.gif">
 </head>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Constantly Blinking Browser Tab Title
+    const originalTitle = document.title;
+    setInterval(() => {
+        document.title = document.title === originalTitle ?  originalTitle + ' ▌' : originalTitle;
+    }, 500);
+    
+    
+});
+</script>
+    
 <body>
 
 <div class="header">
     <h1>blogs</h1>
-    <nav><a href="index.html">cd ~</a> <a href="blog.html">cd ~posts</a></nav>
+    <nav><a href="index.html">cd ~</a> <a href="blog.html">cd ~/posts</a></nav>
 </div>
 
 <h2>ALL POSTS</h2>
