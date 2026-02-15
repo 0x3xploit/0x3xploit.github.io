@@ -6,35 +6,188 @@
     <title>me0w m3ow</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/gif" href="favicon.gif">
+    <style>
+        /* Old CRT TV Effect */
+        body {
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Scanlines effect */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.3) 0px,
+                rgba(0, 0, 0, 0.3) 1px,
+                transparent 1px,
+                transparent 3px
+            );
+            pointer-events: none;
+            z-index: 998;
+        }
+
+        /* CRT flickering */
+        @keyframes flicker {
+            0% { opacity: 0.98; }
+            50% { opacity: 1; }
+            100% { opacity: 0.98; }
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(18, 16, 16, 0.03);
+            opacity: 0;
+            z-index: 997;
+            pointer-events: none;
+            animation: flicker 0.15s infinite;
+        }
+
+        /* Slight vignette */
+        .crt-vignette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            box-shadow: inset 0 0 100px rgba(0,0,0,0.3);
+            pointer-events: none;
+            z-index: 996;
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Dark mode toggle button styles */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: 1px solid currentColor;
+            color: inherit;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-family: monospace;
+            font-size: 12px;
+            border-radius: 4px;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .theme-toggle:hover {
+            background: currentColor;
+            color: var(--bg-color);
+        }
+
+        /* Cats everywhere */
+        .side-cat {
+            position: fixed;
+            width: 120px;
+            height: auto;
+            z-index: 999;
+            opacity: 0.85;
+            image-rendering: pixelated;
+        }
+
+        /* Left side cats */
+        .cat-left-top {
+            left: 750px;
+            top: 5%;
+        }
+
+        .cat-left-bottom {
+            left: 20px;
+            bottom: 15%;
+        }
+
+        /* Right side cats */
+        .cat-right-top {
+            right: 350px;
+            top: 5%;
+        }
+
+        .cat-right-bottom {
+            right: 720px;
+            bottom: 45%;
+        }
+
+        /* Hide cats on small screens */
+        @media (max-width: 768px) {
+            .side-cat {
+                display: none;
+            }
+        }
+
+        /* Dark mode variables */
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --link-color: #193bd3;
+            --header-color: #333333;
+        }
+
+        body.dark-mode {
+            --bg-color: #0d0d0d;
+            --text-color: white;
+            --link-color: #9f75ee;
+            --header-color: #bbd6bb;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        body.dark-mode::after {
+            background: rgba(0, 255, 0, 0.02);
+        }
+
+        a {
+            color: var(--link-color);
+        }
+
+        h1, h2 {
+            color: var(--header-color);
+        }
+    </style>
 </head>
 <body>
+<div class="crt-vignette"></div>
+
+<div class="content-wrapper">
+<button class="theme-toggle" id="themeToggle">[ dark ]</button>
+
+<!-- Cats on left side -->
+<img src="tohappy.gif" alt="cat" class="side-cat cat-left-top">
+
+<!-- Cats on right side -->
+<img src="hackermans.gif" alt="cat" class="side-cat cat-right-bottom">
 
 <div class="header">
-    <h1>low level blog's</h1>
+    <h1>They call me 0xGroot</h1>
     <nav><a href="index.html">cd ~</a> <a href="blog.html">cd ~/posts</a></nav>
 </div>
-
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    // Constantly Blinking Browser Tab Title
-    const originalTitle = document.title;
-    setInterval(() => {
-        document.title = document.title === originalTitle ?  originalTitle + ' ▌' : originalTitle;
-    }, 500);
-    
-    
-});
-</script>
 
 <h2>$whoami<span class="cursor">_</span>
 <img src="favicon.gif" class="whoami-gif">
 </h2>
-
 <style>
-
 .whoami-gif {
-    width: 20px;            /* adjust size */
+    width: 20px;
     height: 20px;
 }
     
@@ -43,41 +196,32 @@ document.addEventListener('DOMContentLoaded', () => {
     margin-left: 4px;
     animation: blink .75s step-end infinite;
 }
-
 @keyframes blink { 
     from, to { opacity: 0; } 
     50% { opacity: 1; } 
 }
 </style>
-
-
 <p style="color: #078007;">
     low-level bug hunter ,memory corruption, CTF addict who probably should touch grass more , spends way too much time staring at gdb output and wondering why my exploit crashed again ,if it involves breaking things at the binary level, I'm interested, malware reverse engineering when I'm not busy segfaulting, stack smashing is my cardio
 </p>
-
-
 <h2>DESCRIPTION</h2>
 <p>
 A collection of technical articles exploring low-level programming concepts.
 Topics include modern C++, x86-64 assembly, memory management, performance 
 optimization, and debugging techniques.
 </p>
-
 <h2>RECENT POSTS</h2>
-
 <div class="post">
     <div class="post-meta">2026-02-13 | Memory Exploitation</div>
     <div class="post-title"><a href="posts/ret2libc.html">ret2libc Attack</a></div>
     <p>Return-to-Library (ret2libc) Attack with ASLR Bypass.</p>
 </div>
-
 <div class="post">
     <div class="post-meta">2026-02-13 | Memory Exploitation</div>
     <div class="post-title"><a href="posts/guideforb.html">Guide for beginners</a></div>
     <p>A comprehensive introduction to memory exploitation covering the fundamentals of how programs work in memory, common vulnerabilities.</p>
 </div>
     
-
 <h2>TOPICS</h2>
 <ul>
     <li>Modern C++ (C++17/20/23)</li>
@@ -85,10 +229,41 @@ optimization, and debugging techniques.
     <li>Memory corruption bugs</li>
     <li>Debugging Techniques</li>
 </ul>
-
 <div class="footer">
     <p>low level blog's | <a href="https://github.com/0x3xploit">github</a> | <a href="https://www.youtube.com/@0x3xploit">Youtube</a></p>
 </div>
+</div>
 
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Blinking Tab Title
+    const originalTitle = document.title;
+    setInterval(() => {
+        document.title = document.title === originalTitle ?  originalTitle + ' ▌' : originalTitle;
+    }, 500);
+    
+    // Dark mode toggle
+    const themeToggle = document.getElementById('themeToggle');
+    const body = document.body;
+    
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    if (currentTheme === 'dark') {
+        body.classList.add('dark-mode');
+        themeToggle.textContent = '[ light ]';
+    }
+    
+    themeToggle.addEventListener('click', () => {
+        body.classList.toggle('dark-mode');
+        
+        if (body.classList.contains('dark-mode')) {
+            themeToggle.textContent = '[ light ]';
+            localStorage.setItem('theme', 'dark');
+        } else {
+            themeToggle.textContent = '[ dark ]';
+            localStorage.setItem('theme', 'light');
+        }
+    });
+});
+</script>
 </body>
 </html>
