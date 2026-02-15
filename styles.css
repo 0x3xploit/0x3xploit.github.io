@@ -220,3 +220,32 @@ li {
         margin-bottom: 0.75rem;
     }
 }
+/* Old School Enhancements */
+:root {
+    --bg-color: #fff;
+    --text-color: #000;
+    --accent-color: #078007;
+    --border-color: #000;
+    --status-bg: #f5f5f5;
+    --hover-bg: rgba(0,0,0,0.02);
+}
+
+body.dark-mode {
+    background: #0a0a0a;
+    color: #00ff00;
+}
+
+a:hover {
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.post-meta {
+    color: #666;
+    font-size: 0.85rem;
+}
+
+.post-title {
+    font-weight: bold;
+    margin: 0.25rem 0;
+}
