@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>0xGroot</title>
+    <title>0xGroot - Hacker Zine</title>
     <link rel="icon" type="image/gif" href="favicon.gif">
     <style>
         * {
@@ -15,662 +15,692 @@
         :root {
             --bg: #ffffff;
             --text: #000000;
-            --link: #0066cc;
-            --link-hover: #0052a3;
-            --card-bg: #f8f9fa;
-            --card-border: #e0e0e0;
-            --header-color: #1a1a1a;
-            --tag-bg: #e8f0fe;
-            --tag-text: #1967d2;
+            --green: #00ff00;
+            --gray: #808080;
         }
 
         body.dark-mode {
-            --bg: #0d1117;
-            --text: #c9d1d9;
-            --link: #58a6ff;
-            --link-hover: #79c0ff;
-            --card-bg: #161b22;
-            --card-border: #30363d;
-            --header-color: #58a6ff;
-            --tag-bg: #1f6feb;
-            --tag-text: #c9d1d9;
+            --bg: #000000;
+            --text: #00ff00;
+            --green: #00ff00;
+            --gray: #008800;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            font-family: 'Courier New', 'Courier', monospace;
             background: var(--bg);
             color: var(--text);
-            line-height: 1.6;
+            line-height: 1.4;
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+            font-size: 14px;
             transition: all 0.3s ease;
         }
 
-        /* Header */
-        header {
-            padding: 30px 20px;
-            border-bottom: 1px solid var(--card-border);
-            position: sticky;
-            top: 0;
-            background: var(--bg);
-            z-index: 100;
-            backdrop-filter: blur(10px);
+        /* ASCII Art Header */
+        .ascii-header {
+            white-space: pre;
+            font-size: 12px;
+            line-height: 1.2;
+            margin-bottom: 30px;
+            color: var(--text);
+            overflow-x: auto;
         }
 
-        .header-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
+        /* Separator lines */
+        .separator {
+            border: none;
+            border-top: 1px solid var(--text);
+            margin: 30px 0;
         }
 
+        .double-separator {
+            border-top: 3px double var(--text);
+            margin: 40px 0;
+        }
+
+        /* Title styling */
         h1 {
-            font-size: 28px;
-            color: var(--header-color);
-            font-weight: 700;
+            text-align: center;
+            font-size: 16px;
+            font-weight: normal;
+            margin: 20px 0;
+            letter-spacing: 2px;
         }
 
+        h2 {
+            font-size: 14px;
+            font-weight: normal;
+            margin: 30px 0 15px 0;
+            text-decoration: underline;
+        }
+
+        h3 {
+            font-size: 14px;
+            font-weight: bold;
+            margin: 20px 0 10px 0;
+        }
+
+        /* Navigation */
         nav {
-            display: flex;
-            gap: 30px;
-            align-items: center;
+            text-align: center;
+            margin: 20px 0;
         }
 
         nav a {
             color: var(--text);
             text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: color 0.2s;
+            margin: 0 15px;
+            font-weight: bold;
         }
 
         nav a:hover {
-            color: var(--link);
-        }
-
-        .theme-toggle {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            color: var(--text);
-            padding: 8px 16px;
-            cursor: pointer;
-            font-size: 13px;
-            border-radius: 6px;
-            transition: all 0.2s;
-            font-weight: 500;
-        }
-
-        .theme-toggle:hover {
-            background: var(--card-border);
-        }
-
-        /* Main Container */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-
-        /* Hero Section */
-        .hero {
-            margin-bottom: 60px;
-        }
-
-        .hero h2 {
-            font-size: 48px;
-            margin-bottom: 20px;
-            color: var(--header-color);
-            font-weight: 700;
-        }
-
-        .hero p {
-            font-size: 18px;
-            color: var(--text);
-            opacity: 0.8;
-            max-width: 800px;
-            line-height: 1.8;
-        }
-
-        /* Section Headers */
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .section-header h3 {
-            font-size: 28px;
-            color: var(--header-color);
-            font-weight: 700;
-        }
-
-        .section-header a {
-            color: var(--link);
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .section-header a:hover {
             text-decoration: underline;
         }
 
-        /* Grid Layout */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 24px;
-            margin-bottom: 80px;
+        /* Content sections */
+        .toc {
+            margin: 30px 0;
         }
 
-        /* Card Styles */
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 12px;
-            padding: 24px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
+        .toc-item {
+            margin: 8px 0;
+            padding-left: 20px;
         }
 
-        .card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-            border-color: var(--link);
-        }
-
-        .card-meta {
-            font-size: 12px;
+        .toc-item a {
             color: var(--text);
-            opacity: 0.6;
-            margin-bottom: 12px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .card-title {
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 12px;
-            color: var(--header-color);
-        }
-
-        .card-title a {
-            color: var(--header-color);
             text-decoration: none;
         }
 
-        .card-title a:hover {
-            color: var(--link);
+        .toc-item a:hover {
+            text-decoration: underline;
         }
 
-        .card-desc {
-            font-size: 14px;
-            line-height: 1.6;
-            opacity: 0.8;
-            margin-bottom: 16px;
-            flex-grow: 1;
+        /* Article entry */
+        .article {
+            margin: 25px 0;
+            padding: 15px 0;
         }
 
-        /* Tags */
-        .tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: auto;
+        .article-header {
+            margin-bottom: 10px;
         }
 
-        .tag {
-            background: var(--tag-bg);
-            color: var(--tag-text);
-            padding: 4px 12px;
-            border-radius: 16px;
+        .article-meta {
+            color: var(--gray);
             font-size: 12px;
-            font-weight: 500;
+            margin-bottom: 5px;
         }
 
-        /* Stats for CTF cards */
-        .card-stats {
-            display: flex;
-            gap: 20px;
-            margin-top: 12px;
-            font-size: 13px;
-            opacity: 0.7;
+        .article-title {
+            font-weight: bold;
+            font-size: 14px;
         }
 
-        .stat {
-            display: flex;
-            align-items: center;
-            gap: 6px;
+        .article-title a {
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .article-title a:hover {
+            text-decoration: underline;
+        }
+
+        .article-desc {
+            margin-top: 8px;
+            padding-left: 20px;
+            line-height: 1.5;
+        }
+
+        .article-tags {
+            margin-top: 8px;
+            padding-left: 20px;
+            color: var(--gray);
+            font-size: 12px;
         }
 
         /* Footer */
-        footer {
-            max-width: 1400px;
-            margin: 80px auto 0;
-            padding: 40px 20px;
-            border-top: 1px solid var(--card-border);
+        .footer {
             text-align: center;
-            font-size: 14px;
-            opacity: 0.7;
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px solid var(--text);
+            font-size: 12px;
+            color: var(--gray);
         }
 
-        footer a {
-            color: var(--link);
+        .footer a {
+            color: var(--text);
             text-decoration: none;
-            margin: 0 10px;
         }
 
-        footer a:hover {
+        .footer a:hover {
             text-decoration: underline;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: transparent;
+            border: 1px solid var(--text);
+            color: var(--text);
+            padding: 5px 10px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+        }
+
+        .theme-toggle:hover {
+            background: var(--text);
+            color: var(--bg);
+        }
+
+        /* Info boxes */
+        .info-box {
+            border: 1px solid var(--text);
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .info-box-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        /* Links */
+        a {
+            color: var(--text);
         }
 
         /* Responsive */
         @media (max-width: 768px) {
-            .grid {
-                grid-template-columns: 1fr;
+            body {
+                padding: 10px;
+                font-size: 12px;
             }
 
-            .hero h2 {
-                font-size: 32px;
+            .ascii-header {
+                font-size: 8px;
             }
 
-            .hero p {
-                font-size: 16px;
+            .theme-toggle {
+                position: static;
+                display: block;
+                margin: 10px auto;
+                width: fit-content;
             }
-
-            nav {
-                width: 100%;
-                justify-content: space-between;
-            }
-
-            .section-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-        }
-
-        /* Smooth scrolling */
-        html {
-            scroll-behavior: smooth;
         }
 
         /* Selection */
         ::selection {
-            background: var(--link);
-            color: white;
+            background: var(--text);
+            color: var(--bg);
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="header-container">
-            <h1>0xGroot</h1>
-            <nav>
-                <a href="#blog">Blog</a>
-                <a href="#ctf">CTF</a>
-                <a href="#projects">Projects</a>
-                <a href="https://github.com/0x3xploit" target="_blank">GitHub</a>
-                <button class="theme-toggle" id="themeToggle">Dark Mode</button>
-            </nav>
-        </div>
-    </header>
+    <button class="theme-toggle" id="themeToggle">[TOGGLE]</button>
 
-    <div class="container">
-        <!-- Hero Section -->
-        <section class="hero">
-            <h2>Low-level security researcher & CTF player</h2>
-            <p>
-                I break things at the binary level for fun. Specializing in memory corruption, 
-                reverse engineering, and exploit development. When I'm not busy segfaulting, 
-                I'm probably writing CTF writeups or building tools for pwn challenges.
-            </p>
-        </section>
-
-        <!-- Blog Posts Grid -->
-        <section id="blog">
-            <div class="section-header">
-                <h3>Recent Blog Posts</h3>
-                <a href="blog.html">View all →</a>
-            </div>
-            <div class="grid">
-                <div class="card">
-                    <div class="card-meta">Feb 13, 2026 • 8 min read</div>
-                    <div class="card-title">
-                        <a href="posts/ret2libc.html">Return-to-libc Attack with ASLR Bypass</a>
-                    </div>
-                    <div class="card-desc">
-                        Deep dive into ret2libc exploitation technique, covering information leaks, 
-                        ASLR bypass methods, and building reliable exploits against modern defenses.
-                    </div>
-                    <div class="tags">
-                        <span class="tag">pwn</span>
-                        <span class="tag">exploitation</span>
-                        <span class="tag">aslr</span>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-meta">Feb 13, 2026 • 12 min read</div>
-                    <div class="card-title">
-                        <a href="posts/guideforb.html">Memory Exploitation for Beginners</a>
-                    </div>
-                    <div class="card-desc">
-                        A comprehensive introduction covering fundamentals of how programs work in memory, 
-                        common vulnerabilities, and basic exploitation techniques.
-                    </div>
-                    <div class="tags">
-                        <span class="tag">tutorial</span>
-                        <span class="tag">beginner</span>
-                        <span class="tag">buffer-overflow</span>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-meta">Jan 28, 2026 • 10 min read</div>
-                    <div class="card-title">
-                        <a href="posts/x86-calling-conventions.html">x86-64 Calling Conventions Explained</a>
-                    </div>
-                    <div class="card-desc">
-                        Understanding System V ABI, register usage, stack frames, and function 
-                        prologue/epilogue in x86-64 architecture.
-                    </div>
-                    <div class="tags">
-                        <span class="tag">assembly</span>
-                        <span class="tag">x86-64</span>
-                        <span class="tag">internals</span>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-meta">Jan 15, 2026 • 15 min read</div>
-                    <div class="card-title">
-                        <a href="posts/malware-unpacking.html">Unpacking Malware: A Practical Approach</a>
-                    </div>
-                    <div class="card-desc">
-                        Techniques for identifying and unpacking common malware packers using dynamic 
-                        analysis, memory dumps, and debugging.
-                    </div>
-                    <div class="tags">
-                        <span class="tag">malware</span>
-                        <span class="tag">reverse-engineering</span>
-                        <span class="tag">unpacking</span>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-meta">Dec 20, 2025 • 18 min read</div>
-                    <div class="card-title">
-                        <a href="posts/heap-exploitation.html">Heap Exploitation Techniques</a>
-                    </div>
-                    <div class="card-desc">
-                        Exploring modern heap exploitation including tcache attacks, fastbin dup, 
-                        and House of techniques against glibc malloc.
-                    </div>
-                    <div class="tags">
-                        <span class="tag">heap</span>
-                        <span class="tag">exploitation</span>
-                        <span class="tag">glibc</span>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-meta">Dec 5, 2025 • 7 min read</div>
-                    <div class="card-title">
-                        <a href="posts/rop-chains.html">Building ROP Chains from Scratch</a>
-                    </div>
-                    <div class="card-desc">
-                        Step-by-step guide to constructing Return-Oriented Programming chains, 
-                        finding gadgets, and bypassing DEP/NX protections.
-                    </div>
-                    <div class="tags">
-                        <span class="tag">rop</span>
-                        <span class="tag">exploitation</span>
-                        <span class="tag">dep-bypass</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- CTF Writeups Grid -->
-        <section id="ctf">
-            <div class="section-header">
-                <h3>CTF Writeups</h3>
-                <a href="ctf.html">View all →</a>
-            </div>
-            <div class="grid">
-                <div class="card">
-                    <div class="card-meta">picoCTF 2024</div>
-                    <div class="card-title">
-                        <a href="ctf/picoctf-buffer-overflow.html">Buffer Overflow 3</a>
-                    </div>
-                    <div class="card-desc">
-                        Classic buffer overflow with NX enabled. Crafted ROP chain to leak libc 
-                        addresses and spawn shell using system().
-                    </div>
-                    <div class="tags">
-                        <span class="tag">pwn</span>
-                        <span class="tag">rop</span>
-                    </div>
-                    <div class="card-stats">
-                        <span class="stat">🏆 500 points</span>
-                        <span class="stat">⭐ 234 solves</span>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-meta">HackTheBox</div>
-                    <div class="card-title">
-                        <a href="ctf/htb-rope.html">Rope</a>
-                    </div>
-                    <div class="card-desc">
-                        Heap exploitation challenge involving tcache poisoning and arbitrary write 
-                        primitive to gain code execution.
-                    </div>
-                    <div class="tags">
-                        <span class="tag">pwn</span>
-                        <span class="tag">heap</span>
-                    </div>
-                    <div class="card-stats">
-                        <span class="stat">🏆 Hard</span>
-                        <span class="stat">⭐ 89 solves</span>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-meta">DEF CON CTF Quals 2024</div>
-                    <div class="card-title">
-                        <a href="ctf/defcon-heap-fengshui.html">Heap Feng Shui</a>
-                    </div>
-                    <div class="card-desc">
-                        Advanced heap exploitation requiring careful heap layout manipulation and 
-                        fastbin attack to overwrite __malloc_hook.
-                    </div>
-                    <div class="tags">
-                        <span class="tag">pwn</span>
-                        <span class="tag">heap</span>
-                        <span class="tag">fastbin</span>
-                    </div>
-                    <div class="card-stats">
-                        <span class="stat">🏆 750 points</span>
-                        <span class="stat">⭐ 12 solves</span>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-meta">CTFtime 2024</div>
-                    <div class="card-title">
-                        <a href="ctf/anti-debug-hell.html">Anti-Debug Hell</a>
-                    </div>
-                    <div class="card-desc">
-                        Reverse engineering challenge with multiple anti-debugging techniques. 
-                        Used binary patching and emulation to extract flag.
-                    </div>
-                    <div class="tags">
-                        <span class="tag">reverse</span>
-                        <span class="tag">anti-debug</span>
-                    </div>
-                    <div class="card-stats">
-                        <span class="stat">🏆 600 points</span>
-                        <span class="stat">⭐ 45 solves</span>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-meta">Google CTF 2024</div>
-                    <div class="card-title">
-                        <a href="ctf/google-kernel-pwn.html">Kernel Pwn</a>
-                    </div>
-                    <div class="card-desc">
-                        Linux kernel exploitation challenge. Found use-after-free vulnerability 
-                        and escalated to root privileges.
-                    </div>
-                    <div class="tags">
-                        <span class="tag">pwn</span>
-                        <span class="tag">kernel</span>
-                        <span class="tag">uaf</span>
-                    </div>
-                    <div class="card-stats">
-                        <span class="stat">🏆 900 points</span>
-                        <span class="stat">⭐ 8 solves</span>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-meta">PlaidCTF 2024</div>
-                    <div class="card-title">
-                        <a href="ctf/plaid-format-string.html">Format String Bonanza</a>
-                    </div>
-                    <div class="card-desc">
-                        Complex format string exploitation with PIE and full RELRO. Leaked addresses 
-                        and overwrote GOT entries for shell.
-                    </div>
-                    <div class="tags">
-                        <span class="tag">pwn</span>
-                        <span class="tag">format-string</span>
-                    </div>
-                    <div class="card-stats">
-                        <span class="stat">🏆 650 points</span>
-                        <span class="stat">⭐ 23 solves</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Projects Grid -->
-        <section id="projects">
-            <div class="section-header">
-                <h3>Projects</h3>
-                <a href="projects.html">View all →</a>
-            </div>
-            <div class="grid">
-                <div class="card">
-                    <div class="card-title">
-                        <a href="https://github.com/0x3xploit/custom-malloc">custom-malloc</a>
-                    </div>
-                    <div class="card-desc">
-                        Custom memory allocator implementation with segregated free lists and coalescing. 
-                        Built for learning heap exploitation techniques and memory management internals.
-                    </div>
-                    <div class="tags">
-                        <span class="tag">C</span>
-                        <span class="tag">x86-64</span>
-                        <span class="tag">memory-management</span>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-title">
-                        <a href="https://github.com/0x3xploit/pwn-toolkit">pwn-toolkit</a>
-                    </div>
-                    <div class="card-desc">
-                        Collection of exploitation scripts and helper utilities for CTF pwn challenges. 
-                        Includes ROP chain builders, shellcode generators, and format string exploiters.
-                    </div>
-                    <div class="tags">
-                        <span class="tag">Python</span>
-                        <span class="tag">Pwntools</span>
-                        <span class="tag">exploitation</span>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-title">
-                        <a href="https://github.com/0x3xploit/x64-debugger">x64-debugger</a>
-                    </div>
-                    <div class="card-desc">
-                        Minimal x86-64 debugger built with ptrace API. Supports breakpoints, single-stepping, 
-                        register inspection, and memory dumping for learning binary analysis.
-                    </div>
-                    <div class="tags">
-                        <span class="tag">C++</span>
-                        <span class="tag">ptrace</span>
-                        <span class="tag">binary-analysis</span>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-title">
-                        <a href="https://github.com/0x3xploit/elf-parser">elf-parser</a>
-                    </div>
-                    <div class="card-desc">
-                        ELF binary parser and analyzer. Extracts headers, sections, symbols, and relocations. 
-                        Used for understanding binary structure and developing exploitation techniques.
-                    </div>
-                    <div class="tags">
-                        <span class="tag">Rust</span>
-                        <span class="tag">binary-format</span>
-                        <span class="tag">parsing</span>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-title">
-                        <a href="https://github.com/0x3xploit/rop-compiler">rop-compiler</a>
-                    </div>
-                    <div class="card-desc">
-                        Automated ROP chain generation tool. Analyzes binary gadgets and constructs 
-                        chains for common operations like system calls and function invocations.
-                    </div>
-                    <div class="tags">
-                        <span class="tag">Python</span>
-                        <span class="tag">ROP</span>
-                        <span class="tag">automation</span>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-title">
-                        <a href="https://github.com/0x3xploit/shellcode-encoder">shellcode-encoder</a>
-                    </div>
-                    <div class="card-desc">
-                        Polymorphic shellcode encoder for bypassing bad character restrictions and 
-                        signature-based detection in exploit development.
-                    </div>
-                    <div class="tags">
-                        <span class="tag">Python</span>
-                        <span class="tag">shellcode</span>
-                        <span class="tag">evasion</span>
-                    </div>
-                </div>
-            </div>
-        </section>
+    <!-- ASCII Art Header -->
+    <div class="ascii-header">
+  ___        ____                 _   
+ / _ \__  __/ ___|_ __ ___   ___ | |_ 
+| | | \ \/ / |  _| '__/ _ \ / _ \| __|
+| |_| |>  <| |_| | | | (_) | (_) | |_ 
+ \___//_/\_\\____|_|  \___/ \___/ \__|
+                                       
     </div>
 
-    <footer>
+    <hr class="double-separator">
+
+    <h1>0xGROOT SECURITY RESEARCH & EXPLOITATION JOURNAL</h1>
+
+    <nav>
+        <a href="#toc">[TABLE OF CONTENTS]</a>
+        <a href="#blog">[ARTICLES]</a>
+        <a href="#ctf">[CTF WRITEUPS]</a>
+        <a href="#projects">[PROJECTS]</a>
+    </nav>
+
+    <hr class="separator">
+
+    <!-- About -->
+    <div class="info-box">
+        <div class="info-box-title">[ ABOUT THIS JOURNAL ]</div>
         <p>
-            <a href="https://github.com/0x3xploit">GitHub</a> •
-            <a href="https://www.youtube.com/@0x3xploit">YouTube</a> •
-            <a href="mailto:contact@0xgroot.dev">Email</a>
+        A collection of security research, binary exploitation techniques, and CTF 
+        solutions. Topics include memory corruption, reverse engineering, malware 
+        analysis, and low-level system internals. All content is for educational 
+        purposes only.
         </p>
-        <p style="margin-top: 10px;">© 2026 0xGroot • pwn responsibly</p>
-    </footer>
+        <br>
+        <p>
+        Author: 0xGroot<br>
+        Contact: groot@exploit.local<br>
+        GitHub: github.com/0x3xploit<br>
+        Status: Active Development
+        </p>
+    </div>
+
+    <hr class="separator">
+
+    <!-- Table of Contents -->
+    <div id="toc" class="toc">
+        <h2>[ TABLE OF CONTENTS ]</h2>
+        
+        <div class="toc-item">0x01. <a href="#blog">Technical Articles</a></div>
+        <div class="toc-item">0x02. <a href="#ctf">CTF Writeups</a></div>
+        <div class="toc-item">0x03. <a href="#projects">Open Source Projects</a></div>
+        <div class="toc-item">0x04. <a href="#contact">Contact & Links</a></div>
+    </div>
+
+    <hr class="double-separator">
+
+    <!-- Blog Articles -->
+    <div id="blog">
+        <h2>[ 0x01. TECHNICAL ARTICLES ]</h2>
+
+        <div class="article">
+            <div class="article-header">
+                <div class="article-meta">[ 2026-02-13 | BINARY EXPLOITATION | 8 MIN READ ]</div>
+                <div class="article-title">
+                    0x01. <a href="posts/ret2libc.html">Return-to-libc Attack with ASLR Bypass</a>
+                </div>
+            </div>
+            <div class="article-desc">
+                Deep dive into ret2libc exploitation technique. This article covers 
+                information leak primitives, ASLR bypass methodologies, and constructing 
+                reliable exploits against modern Linux binaries with full stack protection. 
+                Includes practical examples with pwntools and detailed memory layout analysis.
+            </div>
+            <div class="article-tags">
+                Tags: exploitation, aslr-bypass, ret2libc, linux, pwntools
+            </div>
+        </div>
+
+        <div class="article">
+            <div class="article-header">
+                <div class="article-meta">[ 2026-02-13 | TUTORIAL | 12 MIN READ ]</div>
+                <div class="article-title">
+                    0x02. <a href="posts/guideforb.html">Memory Exploitation Guide for Beginners</a>
+                </div>
+            </div>
+            <div class="article-desc">
+                Comprehensive introduction to memory exploitation covering process memory 
+                layout, stack mechanics, common vulnerabilities, and basic exploitation 
+                techniques. Aimed at beginners with C programming knowledge who want to 
+                understand how buffer overflows work at the assembly level.
+            </div>
+            <div class="article-tags">
+                Tags: tutorial, buffer-overflow, stack, beginner-friendly
+            </div>
+        </div>
+
+        <div class="article">
+            <div class="article-header">
+                <div class="article-meta">[ 2026-01-28 | ASSEMBLY | 10 MIN READ ]</div>
+                <div class="article-title">
+                    0x03. <a href="posts/x86-calling-conventions.html">x86-64 Calling Conventions Explained</a>
+                </div>
+            </div>
+            <div class="article-desc">
+                Understanding System V ABI calling convention for x86-64 architecture. 
+                Covers register usage, argument passing, stack frame structure, function 
+                prologue/epilogue, and calling convention differences between architectures. 
+                Essential knowledge for exploit development and reverse engineering.
+            </div>
+            <div class="article-tags">
+                Tags: assembly, x86-64, calling-conventions, abi, internals
+            </div>
+        </div>
+
+        <div class="article">
+            <div class="article-header">
+                <div class="article-meta">[ 2026-01-15 | REVERSE ENGINEERING | 15 MIN READ ]</div>
+                <div class="article-title">
+                    0x04. <a href="posts/malware-unpacking.html">Unpacking Malware: A Practical Approach</a>
+                </div>
+            </div>
+            <div class="article-desc">
+                Techniques for identifying and unpacking common malware packers including 
+                UPX, Themida, and custom packers. Covers static identification methods, 
+                dynamic unpacking with debuggers, automated tools, and memory dumping 
+                strategies for malware analysis.
+            </div>
+            <div class="article-tags">
+                Tags: malware, reverse-engineering, unpacking, ida-pro, x64dbg
+            </div>
+        </div>
+
+        <div class="article">
+            <div class="article-header">
+                <div class="article-meta">[ 2025-12-20 | HEAP EXPLOITATION | 18 MIN READ ]</div>
+                <div class="article-title">
+                    0x05. <a href="posts/heap-exploitation.html">Modern Heap Exploitation Techniques</a>
+                </div>
+            </div>
+            <div class="article-desc">
+                Exploring modern heap exploitation against glibc malloc. Topics include 
+                tcache attacks, fastbin corruption, unsorted bin attack, House of Spirit, 
+                House of Orange, and other advanced techniques. Includes exploitation 
+                examples against recent glibc versions.
+            </div>
+            <div class="article-tags">
+                Tags: heap, exploitation, glibc, tcache, fastbin, house-of
+            </div>
+        </div>
+
+        <div class="article">
+            <div class="article-header">
+                <div class="article-meta">[ 2025-12-05 | EXPLOITATION | 7 MIN READ ]</div>
+                <div class="article-title">
+                    0x06. <a href="posts/rop-chains.html">Building ROP Chains from Scratch</a>
+                </div>
+            </div>
+            <div class="article-desc">
+                Step-by-step guide to constructing Return-Oriented Programming chains. 
+                Covers gadget hunting with ROPgadget and ropper, building basic chains, 
+                syscall invocation, and bypassing DEP/NX protections. Includes automated 
+                ROP chain generation techniques.
+            </div>
+            <div class="article-tags">
+                Tags: rop, exploitation, dep-bypass, gadgets, automation
+            </div>
+        </div>
+
+        <p style="margin-top: 20px; text-align: center;">
+            <a href="blog.html">[ VIEW ALL ARTICLES ]</a>
+        </p>
+    </div>
+
+    <hr class="double-separator">
+
+    <!-- CTF Writeups -->
+    <div id="ctf">
+        <h2>[ 0x02. CTF WRITEUPS ]</h2>
+
+        <div class="article">
+            <div class="article-header">
+                <div class="article-meta">[ PICOCTF 2024 | PWN | 500 POINTS | 234 SOLVES ]</div>
+                <div class="article-title">
+                    0x01. <a href="ctf/picoctf-buffer-overflow.html">Buffer Overflow 3</a>
+                </div>
+            </div>
+            <div class="article-desc">
+                Classic buffer overflow challenge with NX protection enabled. Exploited using 
+                ROP chain to leak libc base address via puts@plt, then returned to system() 
+                with "/bin/sh" argument. Detailed walkthrough includes exploit development 
+                process and debugging steps.
+            </div>
+            <div class="article-tags">
+                Techniques: buffer-overflow, rop-chain, info-leak, ret2libc
+            </div>
+        </div>
+
+        <div class="article">
+            <div class="article-header">
+                <div class="article-meta">[ HACKTHEBOX | PWN | HARD | 89 SOLVES ]</div>
+                <div class="article-title">
+                    0x02. <a href="ctf/htb-rope.html">Rope</a>
+                </div>
+            </div>
+            <div class="article-desc">
+                Heap exploitation challenge requiring tcache poisoning attack. Found 
+                use-after-free vulnerability allowing arbitrary write primitive. Overwrote 
+                __free_hook with system() address to achieve code execution. Full source 
+                code and exploit provided.
+            </div>
+            <div class="article-tags">
+                Techniques: heap-exploitation, tcache-poisoning, use-after-free, arbitrary-write
+            </div>
+        </div>
+
+        <div class="article">
+            <div class="article-header">
+                <div class="article-meta">[ DEF CON CTF QUALS 2024 | PWN | 750 POINTS | 12 SOLVES ]</div>
+                <div class="article-title">
+                    0x03. <a href="ctf/defcon-heap-fengshui.html">Heap Feng Shui</a>
+                </div>
+            </div>
+            <div class="article-desc">
+                Advanced heap exploitation requiring precise heap layout manipulation. 
+                Performed fastbin dup attack to corrupt fastbin freelists, achieved 
+                arbitrary allocation, and overwrote __malloc_hook with one_gadget. 
+                Detailed heap state diagrams included.
+            </div>
+            <div class="article-tags">
+                Techniques: heap-fengshui, fastbin-attack, malloc-hook, one-gadget
+            </div>
+        </div>
+
+        <div class="article">
+            <div class="article-header">
+                <div class="article-meta">[ GOOGLE CTF 2024 | PWN | 900 POINTS | 8 SOLVES ]</div>
+                <div class="article-title">
+                    0x04. <a href="ctf/google-kernel-pwn.html">Kernel Pwn</a>
+                </div>
+            </div>
+            <div class="article-desc">
+                Linux kernel exploitation challenge. Discovered use-after-free in custom 
+                kernel module. Leveraged UAF for arbitrary read/write primitives, overwrote 
+                modprobe_path for privilege escalation to root. Includes kernel debugging 
+                setup and exploitation methodology.
+            </div>
+            <div class="article-tags">
+                Techniques: kernel-exploitation, use-after-free, privilege-escalation, modprobe-path
+            </div>
+        </div>
+
+        <div class="article">
+            <div class="article-header">
+                <div class="article-meta">[ CTFTIME 2024 | REVERSE | 600 POINTS | 45 SOLVES ]</div>
+                <div class="article-title">
+                    0x05. <a href="ctf/anti-debug-hell.html">Anti-Debug Hell</a>
+                </div>
+            </div>
+            <div class="article-desc">
+                Reverse engineering challenge with multiple anti-debugging and anti-analysis 
+                techniques including PTRACE_TRACEME, timing checks, and debugger detection. 
+                Defeated protections using binary patching, hardware breakpoints, and QEMU 
+                emulation. Flag extraction via dynamic analysis.
+            </div>
+            <div class="article-tags">
+                Techniques: anti-debug, binary-patching, emulation, reverse-engineering
+            </div>
+        </div>
+
+        <div class="article">
+            <div class="article-header">
+                <div class="article-meta">[ PLAIDCTF 2024 | PWN | 650 POINTS | 23 SOLVES ]</div>
+                <div class="article-title">
+                    0x06. <a href="ctf/plaid-format-string.html">Format String Bonanza</a>
+                </div>
+            </div>
+            <div class="article-desc">
+                Complex format string exploitation against PIE binary with full RELRO. 
+                Used format string bug to leak stack and PIE addresses, calculated libc 
+                base, then performed arbitrary write to overwrite stack return address 
+                with one_gadget. Multi-stage exploit with address space randomization bypass.
+            </div>
+            <div class="article-tags">
+                Techniques: format-string, pie-bypass, info-leak, arbitrary-write
+            </div>
+        </div>
+
+        <p style="margin-top: 20px; text-align: center;">
+            <a href="ctf.html">[ VIEW ALL CTF WRITEUPS ]</a>
+        </p>
+    </div>
+
+    <hr class="double-separator">
+
+    <!-- Projects -->
+    <div id="projects">
+        <h2>[ 0x03. OPEN SOURCE PROJECTS ]</h2>
+
+        <div class="article">
+            <div class="article-header">
+                <div class="article-meta">[ C | MEMORY MANAGEMENT | ACTIVE DEVELOPMENT ]</div>
+                <div class="article-title">
+                    0x01. <a href="https://github.com/0x3xploit/custom-malloc">custom-malloc</a>
+                </div>
+            </div>
+            <div class="article-desc">
+                Custom memory allocator implementation featuring segregated free lists, 
+                boundary tag coalescing, and first-fit allocation strategy. Built for 
+                understanding heap internals and heap exploitation primitives. Includes 
+                detailed documentation and test suite.
+            </div>
+            <div class="article-tags">
+                Tech Stack: C, x86-64 Assembly, GDB Scripts
+            </div>
+        </div>
+
+        <div class="article">
+            <div class="article-header">
+                <div class="article-meta">[ PYTHON | EXPLOITATION TOOLKIT | STABLE ]</div>
+                <div class="article-title">
+                    0x02. <a href="https://github.com/0x3xploit/pwn-toolkit">pwn-toolkit</a>
+                </div>
+            </div>
+            <div class="article-desc">
+                Comprehensive collection of exploitation utilities for CTF pwn challenges. 
+                Features automated ROP chain generation, shellcode encoder/decoder, format 
+                string exploiter, heap visualization tools, and pwntools helper functions. 
+                Actively maintained with new modules added regularly.
+            </div>
+            <div class="article-tags">
+                Tech Stack: Python3, Pwntools, ROPgadget, Capstone
+            </div>
+        </div>
+
+        <div class="article">
+            <div class="article-header">
+                <div class="article-meta">[ C++ | BINARY ANALYSIS | BETA ]</div>
+                <div class="article-title">
+                    0x03. <a href="https://github.com/0x3xploit/x64-debugger">x64-debugger</a>
+                </div>
+            </div>
+            <div class="article-desc">
+                Minimal x86-64 debugger built on Linux ptrace API. Supports software/hardware 
+                breakpoints, single-stepping, register inspection, memory dumping, and 
+                disassembly. Educational project for learning debugger internals and binary 
+                analysis fundamentals.
+            </div>
+            <div class="article-tags">
+                Tech Stack: C++17, ptrace, Capstone Disassembler
+            </div>
+        </div>
+
+        <div class="article">
+            <div class="article-header">
+                <div class="article-meta">[ RUST | BINARY FORMAT | STABLE ]</div>
+                <div class="article-title">
+                    0x04. <a href="https://github.com/0x3xploit/elf-parser">elf-parser</a>
+                </div>
+            </div>
+            <div class="article-desc">
+                ELF binary parser and analyzer written in Rust. Extracts and displays headers, 
+                sections, program segments, symbols, relocations, and dynamic information. 
+                Used for binary analysis, exploit development, and understanding executable 
+                file formats. Zero-copy parsing with nom parser combinators.
+            </div>
+            <div class="article-tags">
+                Tech Stack: Rust, nom Parser, ELF Specification
+            </div>
+        </div>
+
+        <div class="article">
+            <div class="article-header">
+                <div class="article-meta">[ PYTHON | ROP AUTOMATION | EXPERIMENTAL ]</div>
+                <div class="article-title">
+                    0x05. <a href="https://github.com/0x3xploit/rop-compiler">rop-compiler</a>
+                </div>
+            </div>
+            <div class="article-desc">
+                Automated ROP chain compiler for x86-64 binaries. Analyzes available gadgets, 
+                constructs dependency graphs, and generates optimal ROP chains for specified 
+                operations including system calls, function invocations, and memory operations. 
+                Supports multiple ROP chain strategies and optimization passes.
+            </div>
+            <div class="article-tags">
+                Tech Stack: Python3, ROPgadget, Z3 SMT Solver, NetworkX
+            </div>
+        </div>
+
+        <div class="article">
+            <div class="article-header">
+                <div class="article-meta">[ PYTHON | SHELLCODE | STABLE ]</div>
+                <div class="article-title">
+                    0x06. <a href="https://github.com/0x3xploit/shellcode-encoder">shellcode-encoder</a>
+                </div>
+            </div>
+            <div class="article-desc">
+                Polymorphic shellcode encoder for bypassing bad character restrictions and 
+                signature-based detection. Implements XOR, SUB, ROR encoding schemes with 
+                customizable decoders. Generates unique shellcode instances for each encoding 
+                operation. Essential tool for exploit development.
+            </div>
+            <div class="article-tags">
+                Tech Stack: Python3, Keystone Assembler, Shellcode Templates
+            </div>
+        </div>
+
+        <p style="margin-top: 20px; text-align: center;">
+            <a href="projects.html">[ VIEW ALL PROJECTS ]</a>
+        </p>
+    </div>
+
+    <hr class="double-separator">
+
+    <!-- Contact -->
+    <div id="contact">
+        <h2>[ 0x04. CONTACT & LINKS ]</h2>
+
+        <div class="info-box">
+            <div class="info-box-title">[ CONTACT INFORMATION ]</div>
+            <p>
+            Email: groot@exploit.local<br>
+            GitHub: <a href="https://github.com/0x3xploit">github.com/0x3xploit</a><br>
+            YouTube: <a href="https://www.youtube.com/@0x3xploit">youtube.com/@0x3xploit</a><br>
+            Twitter: @0xGroot<br>
+            Discord: 0xGroot#1337
+            </p>
+            <br>
+            <p>
+            PGP Key: Available on keybase.io/0xgroot<br>
+            CTFtime: <a href="https://ctftime.org/user/0xgroot">ctftime.org/user/0xgroot</a>
+            </p>
+        </div>
+
+        <div class="info-box">
+            <div class="info-box-title">[ DISCLAIMER ]</div>
+            <p>
+            All content on this site is provided for educational and research purposes 
+            only. The techniques and tools described should only be used on systems you 
+            own or have explicit permission to test. Unauthorized access to computer 
+            systems is illegal. The author assumes no liability for misuse of any 
+            information presented here.
+            </p>
+        </div>
+    </div>
+
+    <hr class="separator">
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>
+        [==============================================]<br>
+        0xGroot Security Research & Exploitation Journal<br>
+        Est. 2024 | Vol. 1 | Issue 1<br>
+        All Rights Reserved | Hack The Planet<br>
+        [==============================================]
+        </p>
+    </div>
 
     <script>
         // Dark mode toggle
@@ -681,27 +711,20 @@
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme === 'dark') {
             body.classList.add('dark-mode');
-            toggle.textContent = 'Light Mode';
         }
         
         toggle.addEventListener('click', () => {
             body.classList.toggle('dark-mode');
-            
-            if (body.classList.contains('dark-mode')) {
-                toggle.textContent = 'Light Mode';
-                localStorage.setItem('theme', 'dark');
-            } else {
-                toggle.textContent = 'Dark Mode';
-                localStorage.setItem('theme', 'light');
-            }
+            localStorage.setItem('theme', body.classList.contains('dark-mode') ? 'dark' : 'light');
         });
 
-        // Make cards clickable
-        document.querySelectorAll('.card').forEach(card => {
-            card.addEventListener('click', (e) => {
-                if (e.target.tagName !== 'A') {
-                    const link = card.querySelector('a');
-                    if (link) window.location.href = link.href;
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
                 }
             });
         });
