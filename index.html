@@ -92,40 +92,41 @@
             color: var(--bg-color);
         }
 
-        /* Cats everywhere */
+        /* Cats everywhere - FIXED POSITION */
         .side-cat {
-            position: fixed;
-            width: 120px;
+            position: fixed !important;
+            width: 100px;
             height: auto;
-            z-index: 999;
-            opacity: 0.85;
+            z-index: 5;
+            opacity: 0.75;
             image-rendering: pixelated;
+            pointer-events: none;
         }
 
-        /* Left side cats */
+        /* Left side cats - positioned far from content */
         .cat-left-top {
-            left: 750px;
-            top: 5%;
+            left: 10px;
+            top: 100px;
         }
 
         .cat-left-bottom {
-            left: 20px;
-            bottom: 15%;
+            left: 10px;
+            bottom: 100px;
         }
 
-        /* Right side cats */
+        /* Right side cats - positioned far from content */
         .cat-right-top {
-            right: 350px;
-            top: 5%;
+            right: 10px;
+            top: 100px;
         }
 
         .cat-right-bottom {
-            right: 720px;
-            bottom: 45%;
+            right: 10px;
+            bottom: 100px;
         }
 
         /* Hide cats on small screens */
-        @media (max-width: 768px) {
+        @media (max-width: 1200px) {
             .side-cat {
                 display: none;
             }
@@ -226,10 +227,12 @@
 <div class="content-wrapper">
 <button class="theme-toggle" id="themeToggle">[ dark ]</button>
 
-<!-- Cats on left side -->
+<!-- Cats on left side - FIXED POSITION -->
 <img src="tohappy.gif" alt="cat" class="side-cat cat-left-top">
+<img src="tohappy.gif" alt="cat" class="side-cat cat-left-bottom">
 
-<!-- Cats on right side -->
+<!-- Cats on right side - FIXED POSITION -->
+<img src="hackermans.gif" alt="cat" class="side-cat cat-right-top">
 <img src="hackermans.gif" alt="cat" class="side-cat cat-right-bottom">
 
 <div class="header">
