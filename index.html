@@ -137,6 +137,7 @@
             --text-color: #000000;
             --link-color: #193bd3;
             --header-color: #333333;
+            --project-border: #dddddd;
         }
 
         body.dark-mode {
@@ -144,6 +145,7 @@
             --text-color: white;
             --link-color: #9f75ee;
             --header-color: #bbd6bb;
+            --project-border: #333333;
         }
 
         body {
@@ -163,6 +165,59 @@
         h1, h2 {
             color: var(--header-color);
         }
+
+        /* Project card styles */
+        .project-card {
+            border: 1px solid var(--project-border);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .project-card:hover {
+            transform: translateX(5px);
+            border-color: var(--link-color);
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .project-title {
+            font-weight: bold;
+            color: var(--link-color);
+        }
+
+        .project-tech {
+            font-size: 11px;
+            opacity: 0.7;
+            font-family: monospace;
+        }
+
+        .ctf-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dotted var(--project-border);
+        }
+
+        .ctf-item:last-child {
+            border-bottom: none;
+        }
+
+        .ctf-name {
+            color: var(--link-color);
+        }
+
+        .ctf-points {
+            font-family: monospace;
+            font-size: 12px;
+            opacity: 0.7;
+        }
     </style>
 </head>
 <body>
@@ -179,7 +234,12 @@
 
 <div class="header">
     <h1>They call me 0xGroot</h1>
-    <nav><a href="index.html">cd ~</a> <a href="blog.html">cd ~/posts</a></nav>
+    <nav>
+        <a href="index.html">cd ~</a> 
+        <a href="blog.html">cd ~/posts</a> 
+        <a href="ctf.html">cd ~/ctf</a> 
+        <a href="projects.html">cd ~/projects</a>
+    </nav>
 </div>
 
 <h2>$whoami<span class="cursor">_</span>
@@ -202,14 +262,84 @@
 }
 </style>
 <p style="color: #078007;">
-    low-level bug hunter ,memory corruption, CTF addict who probably should touch grass more , spends way too much time staring at gdb output and wondering why my exploit crashed again ,if it involves breaking things at the binary level, I'm interested, malware reverse engineering when I'm not busy segfaulting, stack smashing is my cardio
+    low-level bug hunter, memory corruption, CTF addict who probably should touch grass more, spends way too much time staring at gdb output and wondering why my exploit crashed again, if it involves breaking things at the binary level, I'm interested, malware reverse engineering when I'm not busy segfaulting, stack smashing is my cardio
 </p>
+
+<h2>CTF WRITEUPS</h2>
+<div class="ctf-list">
+    <div class="ctf-item">
+        <div>
+            <span class="ctf-name"><a href="ctf/picoctf2024-buffer.html">→ picoCTF 2024 - Buffer Overflow</a></span>
+        </div>
+        <span class="ctf-points">[ pwn | 500pts ]</span>
+    </div>
+    <div class="ctf-item">
+        <div>
+            <span class="ctf-name"><a href="ctf/hackthebox-rope.html">→ HackTheBox - Rope</a></span>
+        </div>
+        <span class="ctf-points">[ pwn | hard ]</span>
+    </div>
+    <div class="ctf-item">
+        <div>
+            <span class="ctf-name"><a href="ctf/ctftime-rop-chain.html">→ CTFtime - ROP Chain Challenge</a></span>
+        </div>
+        <span class="ctf-points">[ pwn | 750pts ]</span>
+    </div>
+    <div class="ctf-item">
+        <div>
+            <span class="ctf-name"><a href="ctf/defcon-quals.html">→ DEF CON Quals - Heap Feng Shui</a></span>
+        </div>
+        <span class="ctf-points">[ pwn | insane ]</span>
+    </div>
+</div>
+<p style="margin-top: 10px;"><a href="ctf.html">[ view all writeups → ]</a></p>
+
+<h2>PERSONAL PROJECTS</h2>
+<div class="project-card">
+    <div class="project-header">
+        <span class="project-title">custom-malloc</span>
+        <span class="project-tech">[ C | x86-64 ]</span>
+    </div>
+    <p>Custom memory allocator implementation with segregated free lists and coalescing. Exploring heap exploitation techniques and memory management internals.</p>
+    <a href="https://github.com/0x3xploit/custom-malloc">→ github</a>
+</div>
+
+<div class="project-card">
+    <div class="project-header">
+        <span class="project-title">pwn-toolkit</span>
+        <span class="project-tech">[ Python | Pwntools ]</span>
+    </div>
+    <p>Collection of exploitation scripts and helper utilities for CTF pwn challenges. Includes ROP chain builders, shellcode generators, and format string exploiters.</p>
+    <a href="https://github.com/0x3xploit/pwn-toolkit">→ github</a>
+</div>
+
+<div class="project-card">
+    <div class="project-header">
+        <span class="project-title">x64-debugger</span>
+        <span class="project-tech">[ C++ | ptrace ]</span>
+    </div>
+    <p>Minimal x86-64 debugger built with ptrace API. Supports breakpoints, single-stepping, register inspection, and memory dumping for learning binary analysis.</p>
+    <a href="https://github.com/0x3xploit/x64-debugger">→ github</a>
+</div>
+
+<div class="project-card">
+    <div class="project-header">
+        <span class="project-title">elf-parser</span>
+        <span class="project-tech">[ Rust | Binary Analysis ]</span>
+    </div>
+    <p>ELF binary parser and analyzer. Extracts headers, sections, symbols, and relocations. Used for understanding binary structure and developing exploitation techniques.</p>
+    <a href="https://github.com/0x3xploit/elf-parser">→ github</a>
+</div>
+
+<p style="margin-top: 10px;"><a href="projects.html">[ view all projects → ]</a></p>
+
 <h2>DESCRIPTION</h2>
 <p>
 A collection of technical articles exploring low-level programming concepts.
 Topics include modern C++, x86-64 assembly, memory management, performance 
 optimization, and debugging techniques.
 </p>
+
 <h2>RECENT POSTS</h2>
 <div class="post">
     <div class="post-meta">2026-02-13 | Memory Exploitation</div>
@@ -229,6 +359,7 @@ optimization, and debugging techniques.
     <li>Memory corruption bugs</li>
     <li>Debugging Techniques</li>
 </ul>
+
 <div class="footer">
     <p>low level blog's | <a href="https://github.com/0x3xploit">github</a> | <a href="https://www.youtube.com/@0x3xploit">Youtube</a></p>
 </div>
