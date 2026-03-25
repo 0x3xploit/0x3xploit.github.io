@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>0xGroot — Resume</title>
+<link rel="icon" type="image/gif" href="favicon.gif">
 <style>
 
   /* ── YOUR THEME VARS ── */
@@ -100,8 +101,17 @@
     padding: 40px 24px 60px;
   }
 
-  /* ── HEADER ── */
-  .header { margin-bottom: 28px; }
+  /* ── STICKY HEADER ── */
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 995;
+    background-color: var(--bg-color);
+    padding: 14px 0 10px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.3s ease;
+  }
 
   .header h1 {
     color: var(--header-color);
@@ -304,7 +314,9 @@
 </div>
 
 <!-- WHOAMI -->
-<h2>$whoami<span class="cursor">_</span></h2>
+<h2>$whoami<span class="cursor">_</span>
+<img src="favicon.gif" style="width:16px;height:16px;vertical-align:middle;margin-left:4px;">
+</h2>
 <p class="profile-text">
   malware analyst &amp; reverse engineer. android and windows binaries mostly.
   use frida to hook java and native code, ida pro + ghidra for static work, x64dbg
@@ -457,13 +469,14 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  // Blinking tab title — your original
+
+  // ── Blinking tab title — exact from your site
   const originalTitle = document.title;
   setInterval(() => {
     document.title = document.title === originalTitle ? originalTitle + ' ▌' : originalTitle;
   }, 500);
 
-  // Dark mode toggle — your original
+  // ── Dark mode toggle — exact from your site
   const themeToggle = document.getElementById('themeToggle');
   const body = document.body;
 
@@ -483,6 +496,13 @@ document.addEventListener('DOMContentLoaded', () => {
       localStorage.setItem('theme', 'light');
     }
   });
+
+  // ── Favicon swap on tab focus/blur — keeps favicon.gif alive
+  const favicon = document.querySelector("link[rel='icon']");
+  document.addEventListener('visibilitychange', () => {
+    favicon.href = document.hidden ? 'favicon.gif' : 'favicon.gif';
+  });
+
 });
 </script>
 </body>
