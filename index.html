@@ -1,237 +1,488 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>me0w m3ow</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="icon" type="image/gif" href="favicon.gif">
-    <style>
-        
-        body::after {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(18, 16, 16, 0.03);
-            opacity: 0;
-            z-index: 997;
-            pointer-events: none;
-            animation: flicker 0.15s infinite;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>0xGroot — Resume</title>
+<style>
 
-        /* Slight vignette */
-        .crt-vignette {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            box-shadow: inset 0 0 100px rgba(0,0,0,0.3);
-            pointer-events: none;
-            z-index: 996;
-        }
+  /* ── YOUR THEME VARS ── */
+  :root {
+    --bg-color: #ffffff;
+    --text-color: #000000;
+    --link-color: #193bd3;
+    --header-color: #333333;
+    --muted-color: #555555;
+    --border-color: #cccccc;
+    --tag-bg: #f0f0f0;
+  }
 
-        .content-wrapper {
-            position: relative;
-            z-index: 10;
-        }
+  body.dark-mode {
+    --bg-color: #0d0d0d;
+    --text-color: white;
+    --link-color: #9f75ee;
+    --header-color: #bbd6bb;
+    --muted-color: #888888;
+    --border-color: #2a2a2a;
+    --tag-bg: #1a1a1a;
+  }
 
-        /* Dark mode toggle button styles */
-        .theme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: none;
-            border: 1px solid currentColor;
-            color: inherit;
-            padding: 8px 12px;
-            cursor: pointer;
-            font-family: monospace;
-            font-size: 12px;
-            border-radius: 4px;
-            z-index: 1000;
-            transition: all 0.3s ease;
-        }
-        
-        .theme-toggle:hover {
-            background: currentColor;
-            color: var(--bg-color);
-        }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        /* Cats everywhere */
-        .side-cat {
-            position: fixed;
-            width: 120px;
-            height: auto;
-            z-index: 999;
-            opacity: 0.85;
-            image-rendering: pixelated;
-        }
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: monospace;
+    font-size: 14px;
+    line-height: 1.7;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
 
-        /* Left side cats */
-        .cat-left-top {
-            left: 750px;
-            top: 5%;
-        }
+  /* CRT flicker */
+  body::after {
+    content: "";
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(18, 16, 16, 0.03);
+    opacity: 0;
+    z-index: 997;
+    pointer-events: none;
+    animation: flicker 0.15s infinite;
+  }
 
-        .cat-left-bottom {
-            left: 20px;
-            bottom: 15%;
-        }
+  body.dark-mode::after {
+    background: rgba(0, 255, 0, 0.02);
+  }
 
-        /* Right side cats */
-        .cat-right-top {
-            right: 350px;
-            top: 5%;
-        }
+  @keyframes flicker {
+    0%   { opacity: 0.03; }
+    50%  { opacity: 0; }
+    100% { opacity: 0.03; }
+  }
 
-        .cat-right-bottom {
-            right: 720px;
-            bottom: 45%;
-        }
+  /* Vignette */
+  .crt-vignette {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    box-shadow: inset 0 0 100px rgba(0,0,0,0.3);
+    pointer-events: none;
+    z-index: 996;
+  }
 
-        /* Hide cats on small screens */
-        @media (max-width: 768px) {
-            .side-cat {
-                display: none;
-            }
-        }
+  /* Dark mode toggle */
+  .theme-toggle {
+    position: fixed;
+    top: 20px; right: 20px;
+    background: none;
+    border: 1px solid currentColor;
+    color: inherit;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-family: monospace;
+    font-size: 12px;
+    border-radius: 4px;
+    z-index: 1000;
+    transition: all 0.3s ease;
+  }
 
-        /* Dark mode variables */
-        :root {
-            --bg-color: #ffffff;
-            --text-color: #000000;
-            --link-color: #193bd3;
-            --header-color: #333333;
-        }
+  .theme-toggle:hover {
+    background: currentColor;
+    color: var(--bg-color);
+  }
 
-        body.dark-mode {
-            --bg-color: #0d0d0d;
-            --text-color: white;
-            --link-color: #9f75ee;
-            --header-color: #bbd6bb;
-        }
+  .content-wrapper {
+    position: relative;
+    z-index: 10;
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 40px 24px 60px;
+  }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
+  /* ── HEADER ── */
+  .header { margin-bottom: 28px; }
 
-        body.dark-mode::after {
-            background: rgba(0, 255, 0, 0.02);
-        }
+  .header h1 {
+    color: var(--header-color);
+    font-size: 22px;
+    font-family: monospace;
+    font-weight: normal;
+    margin-bottom: 6px;
+  }
 
-        a {
-            color: var(--link-color);
-        }
+  nav { margin-top: 6px; }
+  nav a {
+    color: var(--link-color);
+    text-decoration: none;
+    margin-right: 16px;
+    font-size: 13px;
+  }
+  nav a:hover { text-decoration: underline; }
 
-        h1, h2 {
-            color: var(--header-color);
-        }
-    </style>
+  /* ── SECTION HEADERS ── */
+  h2 {
+    color: var(--header-color);
+    font-family: monospace;
+    font-size: 15px;
+    font-weight: normal;
+    margin: 28px 0 10px;
+  }
+
+  .cursor {
+    display: inline;
+    margin-left: 2px;
+    animation: blink .75s step-end infinite;
+  }
+
+  @keyframes blink {
+    from, to { opacity: 0; }
+    50% { opacity: 1; }
+  }
+
+  /* ── PROFILE ── */
+  .profile-text {
+    color: #078007;
+    font-family: monospace;
+    font-size: 13.5px;
+    line-height: 1.75;
+  }
+
+  body.dark-mode .profile-text { color: #4caf50; }
+
+  /* ── SKILL GROUPS ── */
+  .skill-group {
+    margin-bottom: 10px;
+  }
+
+  .skill-group-label {
+    color: var(--muted-color);
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .tag {
+    background: var(--tag-bg);
+    border: 1px solid var(--border-color);
+    padding: 2px 8px;
+    font-size: 12px;
+    font-family: monospace;
+    color: var(--text-color);
+  }
+
+  .tag.hot { color: var(--link-color); border-color: var(--link-color); }
+
+  /* ── CVE BADGES ── */
+  .cve-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .cve {
+    border: 1px solid #cc2200;
+    color: #cc2200;
+    padding: 3px 10px;
+    font-size: 12px;
+    font-family: monospace;
+  }
+
+  body.dark-mode .cve {
+    border-color: #ff4757;
+    color: #ff4757;
+  }
+
+  .cve small {
+    display: block;
+    font-size: 10px;
+    opacity: 0.65;
+  }
+
+  /* ── POSTS / ENTRIES ── */
+  .post {
+    margin-bottom: 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .post:last-of-type { border-bottom: none; }
+
+  .post-meta {
+    color: var(--muted-color);
+    font-size: 12px;
+    margin-bottom: 2px;
+  }
+
+  .post-title {
+    font-size: 14px;
+    margin-bottom: 3px;
+  }
+
+  .post-title a {
+    color: var(--link-color);
+    text-decoration: none;
+  }
+
+  .post-title a:hover { text-decoration: underline; }
+
+  .post p {
+    font-size: 12.5px;
+    color: var(--muted-color);
+  }
+
+  /* ── EDUCATION ── */
+  .edu-item {
+    margin-bottom: 12px;
+  }
+
+  .edu-item .edu-title {
+    font-size: 14px;
+    color: var(--text-color);
+  }
+
+  .edu-item .edu-meta {
+    color: var(--muted-color);
+    font-size: 12px;
+  }
+
+  .edu-item .edu-note {
+    font-size: 12.5px;
+    color: var(--muted-color);
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    margin-top: 40px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border-color);
+    font-size: 12px;
+    color: var(--muted-color);
+  }
+
+  .footer a { color: var(--link-color); text-decoration: none; }
+  .footer a:hover { text-decoration: underline; }
+
+  ul {
+    padding-left: 20px;
+    color: var(--muted-color);
+    font-size: 13px;
+  }
+
+  ul li { margin-bottom: 3px; }
+
+  hr {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: 6px 0 16px;
+  }
+
+</style>
 </head>
 <body>
+
 <div class="crt-vignette"></div>
 
 <div class="content-wrapper">
+
 <button class="theme-toggle" id="themeToggle">[ dark ]</button>
 
-<!-- Cats on left side -->
-<img src="tohappy.gif" alt="cat" class="side-cat cat-left-top">
-
-<!-- Cats on right side -->
-<img src="hackermans.gif" alt="cat" class="side-cat cat-right-bottom">
-
+<!-- HEADER -->
 <div class="header">
-    <h1>They call me 0xGroot</h1>
-    <nav><a href="index.html">cd ~</a> <a href="blog.html">cd ~/posts</a></nav>
+  <h1>They call me 0xGroot</h1>
+  <nav>
+    <a href="index.html">cd ~</a>
+    <a href="blog.html">cd ~/posts</a>
+    <a href="#">cd ~/resume</a>
+  </nav>
 </div>
 
-<h2>$whoami<span class="cursor">_</span>
-<img src="favicon.gif" class="whoami-gif">
-</h2>
-<style>
-.whoami-gif {
-    width: 20px;
-    height: 20px;
-}
-    
-.cursor {
-    display: inline;
-    margin-left: 4px;
-    animation: blink .75s step-end infinite;
-}
-@keyframes blink { 
-    from, to { opacity: 0; } 
-    50% { opacity: 1; } 
-}
-</style>
-<p style="color: #078007;">
-    low-level bug hunter ,memory corruption, CTF addict who probably should touch grass more , spends way too much time staring at gdb output and wondering why my exploit crashed again ,if it involves breaking things at the binary level, I'm interested, malware reverse engineering when I'm not busy segfaulting, stack smashing is my cardio
+<!-- WHOAMI -->
+<h2>$whoami<span class="cursor">_</span></h2>
+<p class="profile-text">
+  malware analyst &amp; reverse engineer. android and windows binaries mostly.
+  use frida to hook java and native code, ida pro + ghidra for static work, x64dbg
+  when i need to step through things. do dynamic analysis in isolated vm setups —
+  procmon, api monitor, wireshark, remnux, inetsim. found real bugs: 3 cves in
+  cpphttplib. actively hunting more. solved 6/10 at flare-on 2025. 
+  currently finishing msc in digital forensics &amp; information security in goa.
+  if it involves breaking things at the binary level, i'm interested.
 </p>
-<h2>DESCRIPTION</h2>
-<p>
-A collection of technical articles exploring low-level programming concepts.
-Topics include modern C++, x86-64 assembly, memory management, performance 
-optimization, and debugging techniques.
-</p>
-<h2>RECENT POSTS</h2>
-<div class="post">
-    <div class="post-meta">2026-02-13 | Memory Exploitation</div>
-    <div class="post-title"><a href="posts/ret2libc.html">ret2libc Attack</a></div>
-    <p>Return-to-Library (ret2libc) Attack with ASLR Bypass.</p>
+
+<!-- SKILLS -->
+<h2>$skills<span class="cursor">_</span></h2>
+<hr>
+
+<div class="skill-group">
+  <div class="skill-group-label">// android re</div>
+  <div class="tags">
+    <span class="tag hot">Frida</span>
+    <span class="tag hot">apktool</span>
+    <span class="tag hot">jadx-gui</span>
+    <span class="tag">Java hooking</span>
+    <span class="tag">Native (C++) hooking</span>
+    <span class="tag">Memory tracing</span>
+    <span class="tag">APK analysis</span>
+  </div>
 </div>
-<div class="post">
-    <div class="post-meta">2026-02-13 | Memory Exploitation</div>
-    <div class="post-title"><a href="posts/guideforb.html">Guide for beginners</a></div>
-    <p>A comprehensive introduction to memory exploitation covering the fundamentals of how programs work in memory, common vulnerabilities.</p>
+
+<div class="skill-group">
+  <div class="skill-group-label">// windows re</div>
+  <div class="tags">
+    <span class="tag hot">IDA Pro</span>
+    <span class="tag hot">Ghidra</span>
+    <span class="tag">x64dbg</span>
+    <span class="tag">Binary Ninja</span>
+    <span class="tag">WinDbg</span>
+    <span class="tag">PE / DLL</span>
+    <span class="tag">x86_64 ASM</span>
+  </div>
 </div>
-    
+
+<div class="skill-group">
+  <div class="skill-group-label">// malware analysis</div>
+  <div class="tags">
+    <span class="tag hot">Procmon</span>
+    <span class="tag hot">API Monitor</span>
+    <span class="tag">Wireshark</span>
+    <span class="tag">TCPView</span>
+    <span class="tag">REMnux</span>
+    <span class="tag">Inetsim</span>
+    <span class="tag">VMware / VBox</span>
+  </div>
+</div>
+
+<div class="skill-group">
+  <div class="skill-group-label">// exploitation</div>
+  <div class="tags">
+    <span class="tag hot">Buffer Overflow</span>
+    <span class="tag hot">ROP Chains</span>
+    <span class="tag">ret2libc / ret2win</span>
+    <span class="tag">Heap UAF</span>
+    <span class="tag">Memory Corruption</span>
+  </div>
+</div>
+
+<div class="skill-group">
+  <div class="skill-group-label">// programming</div>
+  <div class="tags">
+    <span class="tag hot">C / C++</span>
+    <span class="tag hot">x86_64 ASM</span>
+    <span class="tag">Python</span>
+    <span class="tag">Linux internals</span>
+    <span class="tag">Windows internals</span>
+  </div>
+</div>
+
+<!-- CVEs -->
+<h2>$cve<span class="cursor">_</span></h2>
+<hr>
+<div class="cve-list">
+  <div class="cve">CVE-2026-28434<small>cpphttplib</small></div>
+  <div class="cve">CVE-2026-31870<small>cpphttplib</small></div>
+  <div class="cve">CVE-2026-32627<small>cpphttplib</small></div>
+</div>
+
+<!-- HIGHLIGHTS -->
+<h2>$highlights<span class="cursor">_</span></h2>
+<hr>
+
+<div class="post">
+  <div class="post-meta">2025 | CTF</div>
+  <div class="post-title">Flare-ON 2025 — 6 / 10 solved</div>
+  <p>Mandiant's yearly RE CTF. Crackmes, packed binaries, obfuscated samples. Worked through 6 of 10 using IDA, x64dbg, and a lot of patience.</p>
+</div>
+
+<div class="post">
+  <div class="post-meta">2025–2026 | Android RE</div>
+  <div class="post-title">Android hooking with Frida</div>
+  <p>Hooked Java methods and native C++ code at runtime to trace memory, bypass checks, and analyse app behaviour. apktool + jadx for static, Frida for everything dynamic.</p>
+</div>
+
+<div class="post">
+  <div class="post-meta">2025–2026 | Windows RE</div>
+  <div class="post-title">PE / DLL analysis & process memory</div>
+  <p>Regular work on Windows binaries — import tables, DLL injection, in-process memory reads. IDA Pro and x64dbg for stepping through execution and finding suspicious patterns.</p>
+</div>
+
+<div class="post">
+  <div class="post-meta">2026 | Bug Research</div>
+  <div class="post-title">3 CVEs in cpphttplib — independent research</div>
+  <p>Found three bugs in cpphttplib through source auditing and manual testing. All confirmed and published. Actively hunting more across open-source projects.</p>
+</div>
+
+<!-- EDUCATION -->
+<h2>$education<span class="cursor">_</span></h2>
+<hr>
+
+<div class="edu-item">
+  <div class="edu-title">MSc Digital Forensics &amp; Information Security</div>
+  <div class="edu-meta">2024 – present · Goa Campus</div>
+  <div class="edu-note">Forensics, malware analysis, infosec. Doing independent vuln research alongside coursework.</div>
+</div>
+
+<div class="edu-item">
+  <div class="edu-title">Bachelor of Computer Applications (BCA)</div>
+  <div class="edu-meta">Goa</div>
+  <div class="edu-note">Core CS — networking, programming, systems. Started getting into low-level stuff here.</div>
+</div>
+
+<div class="edu-item">
+  <div class="edu-title">12th — Computer Science</div>
+  <div class="edu-meta">Seciren</div>
+</div>
+
+<!-- TOPICS -->
 <h2>TOPICS</h2>
 <ul>
-    <li>Modern C++ (C++17/20/23)</li>
-    <li>x86-64 Assembly & Architecture</li>
-    <li>Memory corruption bugs</li>
-    <li>Debugging Techniques</li>
+  <li>Android &amp; Windows malware reverse engineering</li>
+  <li>x86-64 Assembly &amp; Architecture</li>
+  <li>Memory corruption bugs &amp; exploitation</li>
+  <li>Dynamic analysis &amp; sandboxing</li>
+  <li>Vulnerability research &amp; CVE writing</li>
 </ul>
+
+<!-- FOOTER -->
 <div class="footer">
-    <p>low level blog's | <a href="https://github.com/0x3xploit">github</a> | <a href="https://www.youtube.com/@0x3xploit">Youtube</a></p>
+  <p>0xGroot · resume | <a href="https://github.com/0x3xploit">github</a> | <a href="https://www.youtube.com/@0x3xploit">youtube</a></p>
 </div>
+
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // Blinking Tab Title
-    const originalTitle = document.title;
-    setInterval(() => {
-        document.title = document.title === originalTitle ?  originalTitle + ' ▌' : originalTitle;
-    }, 500);
-    
-    // Dark mode toggle
-    const themeToggle = document.getElementById('themeToggle');
-    const body = document.body;
-    
-    const currentTheme = localStorage.getItem('theme') || 'light';
-    if (currentTheme === 'dark') {
-        body.classList.add('dark-mode');
-        themeToggle.textContent = '[ light ]';
+  // Blinking tab title — your original
+  const originalTitle = document.title;
+  setInterval(() => {
+    document.title = document.title === originalTitle ? originalTitle + ' ▌' : originalTitle;
+  }, 500);
+
+  // Dark mode toggle — your original
+  const themeToggle = document.getElementById('themeToggle');
+  const body = document.body;
+
+  const currentTheme = localStorage.getItem('theme') || 'light';
+  if (currentTheme === 'dark') {
+    body.classList.add('dark-mode');
+    themeToggle.textContent = '[ light ]';
+  }
+
+  themeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    if (body.classList.contains('dark-mode')) {
+      themeToggle.textContent = '[ light ]';
+      localStorage.setItem('theme', 'dark');
+    } else {
+      themeToggle.textContent = '[ dark ]';
+      localStorage.setItem('theme', 'light');
     }
-    
-    themeToggle.addEventListener('click', () => {
-        body.classList.toggle('dark-mode');
-        
-        if (body.classList.contains('dark-mode')) {
-            themeToggle.textContent = '[ light ]';
-            localStorage.setItem('theme', 'dark');
-        } else {
-            themeToggle.textContent = '[ dark ]';
-            localStorage.setItem('theme', 'light');
-        }
-    });
+  });
 });
 </script>
 </body>
