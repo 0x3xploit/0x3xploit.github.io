@@ -1,0 +1,37 @@
+---
+layout: default
+---
+
+<article class="post-article">
+
+  <header class="article-header">
+    <div class="article-meta-bar">
+      <time class="post-date" datetime="{{ page.date | date_to_xmlschema }}">
+        {{ page.date | date: "%Y-%m-%d" }}
+      </time>
+      {% if page.category %}
+      <span class="post-category cat-{{ page.category | downcase | replace: ' ', '-' | replace: '/', '-' }}">{{ page.category }}</span>
+      {% endif %}
+      {% if page.read_time %}
+      <span class="read-time">{{ page.read_time }} min read</span>
+      {% endif %}
+    </div>
+    <h1 class="article-title">{{ page.title }}</h1>
+    {% if page.tags and page.tags.size > 0 %}
+    <div class="article-tags">
+      {% for tag in page.tags %}
+      <span class="post-tag">{{ tag }}</span>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </header>
+
+  <div class="article-body">
+    {{ content }}
+  </div>
+
+  <footer class="article-footer">
+    <a href="{{ '/blog/' | relative_url }}" class="back-link">← All Posts</a>
+  </footer>
+
+</article>
