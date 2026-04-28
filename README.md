@@ -1,79 +1,190 @@
-# Low Level Lab - Man Page Style Blog
+# 0x3xploit — Security Research Blog
 
-Ultra-minimal static blog. Pure HTML/CSS. Zero JavaScript. Zero distractions.
+Dark-themed security research blog built with **Jekyll** and hosted on **GitHub Pages** at [0x3xploit.xyz](https://0x3xploit.xyz).
 
-Inspired by Unix man pages.
+Topics: binary exploitation, reverse engineering, kernel research, CTF writeups.
 
-## Files
+---
 
+## Adding a Blog Post
+
+All posts live in the `_posts/` directory as Markdown files.
+
+### 1. Create the File
+
+File name format: `_posts/YYYY-MM-DD-your-post-title.md`
+
+Example: `_posts/2026-05-01-heap-exploitation-basics.md`
+
+### 2. Front Matter Template
+
+Copy this to the top of your `.md` file:
+
+```yaml
+---
+layout: post
+title: "Your Post Title Here"
+date: 2026-05-01
+category: "Exploit Development"
+tags: [tag1, tag2, tag3]
+read_time: 10
+excerpt: "One or two sentence summary shown on the post listing page."
+---
 ```
-index.html          - home page
-blog.html           - all posts
-post-template.html  - copy this for new posts
-styles.css          - minimal styling
-posts/              - blog posts directory
+
+**Front matter fields:**
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `layout` | ✅ | Always `post` |
+| `title` | ✅ | Post title (shown in listing and article header) |
+| `date` | ✅ | Post date in `YYYY-MM-DD` format |
+| `category` | optional | Category badge color (see below) |
+| `tags` | optional | Array of lowercase tags |
+| `read_time` | optional | Estimated reading time in minutes |
+| `excerpt` | optional | Overrides auto-generated excerpt on listing page |
+
+**Category color mapping:**
+
+| Category | Color |
+|----------|-------|
+| `Exploit Development` / `Binary Exploitation` | Purple |
+| `Reverse Engineering` | Cyan |
+| `Kernel Research` / `Windows Kernel` | Red |
+| `Hypervisors` | Yellow-green |
+| `CTF Writeups` | Cyan |
+
+### 3. Write Your Post
+
+Use standard Markdown with full GitHub-Flavored Markdown (GFM) support:
+
+````markdown
+## Introduction
+
+Your content here. Use `inline code` for short snippets.
+
+## Background
+
+Use fenced code blocks with language hints for syntax highlighting:
+
+```c
+int main() {
+    char buf[16];
+    gets(buf);  // vulnerable!
+    return 0;
+}
 ```
 
-## Test Locally
+```python
+from pwn import *
+io = process('./vuln')
+```
+
+> Use blockquotes for important notes or callouts.
+
+| Column A | Column B |
+|----------|----------|
+| data     | data     |
+
+## Conclusion
+````
+
+### 4. Push and Deploy
 
 ```bash
-python3 -m http.server 8000
+git add _posts/YYYY-MM-DD-your-title.md
+git commit -m "Add post: Your Post Title"
+git push
 ```
 
-Open `http://localhost:8000`
+GitHub Pages will build and deploy automatically within ~60 seconds.
 
-## Add New Post
+---
 
-1. Copy template:
-```bash
-cp post-template.html posts/my-post.html
-```
+## Preview Locally
 
-2. Edit `posts/my-post.html`:
-   - Change `<title>MY-POST(1)</title>`
-   - Update h1 and article title
-   - Replace content
-
-3. Add to `blog.html`:
-```html
-<div class="post">
-    <div class="post-meta">2024-02-15 | category | 10 min</div>
-    <div class="post-title"><a href="posts/my-post.html">Title</a></div>
-    <p>Description</p>
-</div>
-```
-
-4. (Optional) Add to `index.html` recent posts
-
-## Man Page Sections
-
-Use these standard man page section names in your posts:
-
-- NAME - brief description
-- SYNOPSIS - quick summary
-- DESCRIPTION - main content
-- IMPLEMENTATION - code details
-- EXAMPLES - usage examples
-- NOTES - important details
-- SEE ALSO - references
-
-## Deploy
-
-### GitHub Pages
+### Install Ruby + Jekyll
 
 ```bash
-git init
-git add .
-git commit -m "init"
-git push -u origin main
+# macOS (Homebrew)
+brew install ruby
+export PATH="/usr/local/opt/ruby/bin:$PATH"
+gem install bundler
+
+# Ubuntu/Debian
+sudo apt install ruby-full build-essential zlib1g-dev
+gem install bundler
 ```
 
-Enable Pages in repo settings.
+### Run the Site
 
-### Other
+```bash
+cd /path/to/repo
+bundle install
+bundle exec jekyll serve --livereload
+```
 
-Upload files to any static host.
+Open `http://localhost:4000` in your browser. Changes to posts and CSS reload automatically.
 
-## That's It
+---
 
-No build process. No dependencies. Just write and deploy.
+## Project Structure
+
+```
+0x3xploit.github.io/
+├── _config.yml          # Jekyll configuration
+├── _layouts/
+│   ├── default.html     # base layout (sidebar + main)
+│   ├── post.html        # article layout
+│   └── page.html        # simple page layout
+├── _includes/
+│   ├── head.html        # <head> tag
+│   └── sidebar.html     # sidebar nav
+├── _posts/              # blog posts (Markdown)
+│   └── YYYY-MM-DD-title.md
+├── assets/
+│   └── css/
+│       └── main.css     # all styles
+├── index.html           # home page (Jekyll)
+├── blog.md              # blog listing page
+├── about.md             # about page
+├── CNAME                # custom domain
+└── feed.xml             # RSS/Atom feed (auto-generated by jekyll-feed)
+```
+
+---
+
+## Customization
+
+### Site Config (`_config.yml`)
+
+```yaml
+title: "Your Site Name"
+description: "Your description"
+url: "https://yourdomain.com"
+author:
+  name: "YourHandle"
+  github: "YourGitHub"
+  twitter: "YourTwitter"
+```
+
+### Colors (CSS Variables)
+
+Edit `assets/css/main.css`, section `:root`:
+
+```css
+:root {
+  --accent:  #e8ff47;   /* primary accent (yellow-green) */
+  --accent2: #47ffcc;   /* secondary accent (cyan) */
+  --accent3: #ff4757;   /* tertiary accent (red) */
+  --bg:      #0a0a0b;   /* main background */
+}
+```
+
+---
+
+## GitHub Pages Build Notes
+
+- Uses `github-pages` gem which bundles Jekyll and supported plugins
+- Plugins used: `jekyll-feed` (RSS), `jekyll-seo-tag` (meta tags)
+- No custom GitHub Actions needed — push to `main` and GitHub builds automatically
