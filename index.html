@@ -3,507 +3,1017 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>0xGroot — Resume</title>
-<link rel="icon" type="image/gif" href="favicon.gif">
+<title>Pratham Naik — Security Research & Reverse Engineering</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,600;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-
-  /* ── YOUR THEME VARS ── */
   :root {
-    --bg-color: #ffffff;
-    --text-color: #000000;
-    --link-color: #193bd3;
-    --header-color: #333333;
-    --muted-color: #555555;
-    --border-color: #cccccc;
-    --tag-bg: #f0f0f0;
+    --bg: #0a0a0b;
+    --bg2: #101013;
+    --bg3: #141418;
+    --border: #1e1e25;
+    --border2: #2a2a35;
+    --accent: #e8ff47;
+    --accent2: #47ffcc;
+    --accent3: #ff4757;
+    --text: #c8c8d4;
+    --text-dim: #5a5a6e;
+    --text-bright: #f0f0f8;
+    --sidebar-w: 260px;
   }
 
-  body.dark-mode {
-    --bg-color: #0d0d0d;
-    --text-color: white;
-    --link-color: #9f75ee;
-    --header-color: #bbd6bb;
-    --muted-color: #888888;
-    --border-color: #2a2a2a;
-    --tag-bg: #1a1a1a;
-  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
 
   body {
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    font-family: monospace;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
     font-size: 14px;
     line-height: 1.7;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    min-height: 100vh;
+    overflow-x: hidden;
   }
 
-  /* CRT flicker */
+  /* Scanline overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.03) 2px,
+      rgba(0,0,0,0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* Noise texture */
   body::after {
-    content: "";
+    content: '';
     position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(18, 16, 16, 0.03);
-    opacity: 0;
-    z-index: 997;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
     pointer-events: none;
-    animation: flicker 0.15s infinite;
+    z-index: 9998;
+    opacity: 0.4;
   }
 
-  body.dark-mode::after {
-    background: rgba(0, 255, 0, 0.02);
+  a { color: inherit; text-decoration: none; }
+
+  /* ─── LAYOUT ─── */
+  .layout {
+    display: flex;
+    min-height: 100vh;
   }
 
-  @keyframes flicker {
-    0%   { opacity: 0.03; }
-    50%  { opacity: 0; }
-    100% { opacity: 0.03; }
-  }
-
-  /* Vignette */
-  .crt-vignette {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    box-shadow: inset 0 0 100px rgba(0,0,0,0.3);
-    pointer-events: none;
-    z-index: 996;
-  }
-
-  /* Dark mode toggle */
-  .theme-toggle {
-    position: fixed;
-    top: 20px; right: 20px;
-    background: none;
-    border: 1px solid currentColor;
-    color: inherit;
-    padding: 8px 12px;
-    cursor: pointer;
-    font-family: monospace;
-    font-size: 12px;
-    border-radius: 4px;
-    z-index: 1000;
-    transition: all 0.3s ease;
-  }
-
-  .theme-toggle:hover {
-    background: currentColor;
-    color: var(--bg-color);
-  }
-
-  .content-wrapper {
-    position: relative;
-    z-index: 10;
-    max-width: 780px;
-    margin: 0 auto;
-    padding: 40px 24px 60px;
-  }
-
-  /* ── STICKY HEADER ── */
-  .header {
+  /* ─── SIDEBAR ─── */
+  .sidebar {
+    width: var(--sidebar-w);
+    flex-shrink: 0;
     position: sticky;
     top: 0;
-    z-index: 995;
-    background-color: var(--bg-color);
-    padding: 14px 0 10px;
-    margin-bottom: 20px;
-    border-bottom: 1px solid var(--border-color);
-    transition: background-color 0.3s ease;
+    height: 100vh;
+    overflow-y: auto;
+    border-right: 1px solid var(--border);
+    background: var(--bg2);
+    display: flex;
+    flex-direction: column;
+    padding: 36px 0 24px;
+    z-index: 100;
   }
 
-  .header h1 {
-    color: var(--header-color);
-    font-size: 22px;
-    font-family: monospace;
-    font-weight: normal;
-    margin-bottom: 6px;
+  .sidebar::-webkit-scrollbar { width: 3px; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border2); }
+
+  .profile {
+    padding: 0 24px 32px;
+    border-bottom: 1px solid var(--border);
   }
 
-  nav { margin-top: 6px; }
-  nav a {
-    color: var(--link-color);
-    text-decoration: none;
-    margin-right: 16px;
-    font-size: 13px;
-  }
-  nav a:hover { text-decoration: underline; }
-
-  /* ── SECTION HEADERS ── */
-  h2 {
-    color: var(--header-color);
-    font-family: monospace;
-    font-size: 15px;
-    font-weight: normal;
-    margin: 28px 0 10px;
+  .avatar-wrap {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 16px;
+    position: relative;
   }
 
-  .cursor {
-    display: inline;
-    margin-left: 2px;
-    animation: blink .75s step-end infinite;
+  .avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 4px;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: -2px;
+    position: relative;
+    overflow: hidden;
   }
 
-  @keyframes blink {
-    from, to { opacity: 0; }
-    50% { opacity: 1; }
+  .avatar::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(232,255,71,0.1) 0%, transparent 60%);
   }
 
-  /* ── PROFILE ── */
-  .profile-text {
-    color: #078007;
-    font-family: monospace;
-    font-size: 13.5px;
-    line-height: 1.75;
+  .avatar-status {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 12px;
+    height: 12px;
+    background: var(--accent2);
+    border-radius: 50%;
+    border: 2px solid var(--bg2);
+    animation: pulse 2s infinite;
   }
 
-  body.dark-mode .profile-text { color: #4caf50; }
-
-  /* ── SKILL GROUPS ── */
-  .skill-group {
-    margin-bottom: 10px;
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.9); }
   }
 
-  .skill-group-label {
-    color: var(--muted-color);
-    font-size: 12px;
+  .profile-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    color: var(--text-bright);
+    letter-spacing: -0.5px;
     margin-bottom: 4px;
   }
 
-  .tags {
+  .profile-title {
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .profile-title span {
+    color: var(--accent2);
+    font-style: italic;
+  }
+
+  .profile-links {
     display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
+    gap: 8px;
+    margin-top: 14px;
   }
 
-  .tag {
-    background: var(--tag-bg);
-    border: 1px solid var(--border-color);
-    padding: 2px 8px;
+  .profile-links a {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: var(--text-dim);
+    padding: 4px 8px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    transition: all 0.2s;
+    background: var(--bg3);
+  }
+
+  .profile-links a:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: rgba(232,255,71,0.05);
+  }
+
+  /* Nav */
+  .nav {
+    padding: 20px 0;
+    flex: 1;
+  }
+
+  .nav-section {
+    margin-bottom: 4px;
+  }
+
+  .nav-label {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    padding: 8px 24px 4px;
+    display: block;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 24px;
     font-size: 12px;
-    font-family: monospace;
-    color: var(--text-color);
+    color: var(--text-dim);
+    transition: all 0.15s;
+    cursor: pointer;
+    border-left: 2px solid transparent;
   }
 
-  .tag.hot { color: var(--link-color); border-color: var(--link-color); }
+  .nav-item:hover, .nav-item.active {
+    color: var(--text-bright);
+    background: rgba(255,255,255,0.03);
+  }
 
-  /* ── CVE BADGES ── */
-  .cve-list {
+  .nav-item.active {
+    border-left-color: var(--accent);
+    color: var(--accent);
+    background: rgba(232,255,71,0.04);
+  }
+
+  .nav-item .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--border2);
+    flex-shrink: 0;
+    transition: background 0.15s;
+  }
+
+  .nav-item:hover .dot, .nav-item.active .dot {
+    background: var(--accent);
+  }
+
+  .nav-sub {
+    padding-left: 16px;
+  }
+
+  .nav-sub .nav-item {
+    font-size: 11px;
+    padding: 5px 24px 5px 16px;
+  }
+
+  .sidebar-footer {
+    padding: 16px 24px 0;
+    border-top: 1px solid var(--border);
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+
+  .sidebar-footer .version {
+    color: var(--accent);
+    font-style: italic;
+  }
+
+  /* ─── MAIN ─── */
+  .main {
+    flex: 1;
+    max-width: 860px;
+    padding: 0;
+  }
+
+  /* Hero */
+  .hero {
+    padding: 64px 60px 48px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -80px;
+    right: -80px;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(232,255,71,0.04) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-bottom: 20px;
+    letter-spacing: 0.1em;
+  }
+
+  .hero-eyebrow::before {
+    content: '>';
+    color: var(--accent);
+    animation: blink 1.2s step-end infinite;
+  }
+
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+  .hero-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(32px, 4vw, 52px);
+    color: var(--text-bright);
+    line-height: 1.05;
+    letter-spacing: -1.5px;
+    margin-bottom: 20px;
+  }
+
+  .hero-title .accent { color: var(--accent); }
+  .hero-title .dim { color: var(--text-dim); font-weight: 400; }
+
+  .hero-desc {
+    font-size: 13px;
+    color: var(--text-dim);
+    max-width: 520px;
+    line-height: 1.8;
+    margin-bottom: 28px;
+  }
+
+  .hero-tags {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-top: 4px;
   }
 
-  .cve {
-    border: 1px solid #cc2200;
-    color: #cc2200;
-    padding: 3px 10px;
-    font-size: 12px;
-    font-family: monospace;
-  }
-
-  body.dark-mode .cve {
-    border-color: #ff4757;
-    color: #ff4757;
-  }
-
-  .cve small {
-    display: block;
+  .tag {
     font-size: 10px;
-    opacity: 0.65;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border: 1px solid var(--border2);
+    border-radius: 2px;
+    color: var(--text-dim);
+    background: var(--bg3);
+    transition: all 0.2s;
   }
 
-  /* ── POSTS / ENTRIES ── */
-  .post {
-    margin-bottom: 14px;
-    padding-bottom: 14px;
-    border-bottom: 1px solid var(--border-color);
+  .tag:hover { border-color: var(--accent); color: var(--accent); cursor: default; }
+  .tag.accent { border-color: rgba(232,255,71,0.3); color: var(--accent); background: rgba(232,255,71,0.05); }
+  .tag.cyan { border-color: rgba(71,255,204,0.3); color: var(--accent2); background: rgba(71,255,204,0.05); }
+  .tag.red { border-color: rgba(255,71,87,0.3); color: var(--accent3); background: rgba(255,71,87,0.05); }
+
+  /* Section headers */
+  .section-header {
+    padding: 24px 60px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 
-  .post:last-of-type { border-bottom: none; }
+  .section-title {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-title::before {
+    content: '';
+    display: inline-block;
+    width: 16px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .section-count {
+    font-size: 10px;
+    color: var(--text-dim);
+    font-style: italic;
+  }
+
+  /* Posts */
+  .posts {
+    padding: 0;
+  }
+
+  .post-card {
+    padding: 36px 60px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    transition: background 0.2s;
+    cursor: pointer;
+  }
+
+  .post-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: transparent;
+    transition: background 0.2s;
+  }
+
+  .post-card:hover {
+    background: rgba(255,255,255,0.015);
+  }
+
+  .post-card:hover::before {
+    background: var(--accent);
+  }
 
   .post-meta {
-    color: var(--muted-color);
-    font-size: 12px;
-    margin-bottom: 2px;
-  }
-
-  .post-title {
-    font-size: 14px;
-    margin-bottom: 3px;
-  }
-
-  .post-title a {
-    color: var(--link-color);
-    text-decoration: none;
-  }
-
-  .post-title a:hover { text-decoration: underline; }
-
-  .post p {
-    font-size: 12.5px;
-    color: var(--muted-color);
-  }
-
-  /* ── EDUCATION ── */
-  .edu-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
     margin-bottom: 12px;
   }
 
-  .edu-item .edu-title {
-    font-size: 14px;
-    color: var(--text-color);
+  .post-date {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-family: 'Space Mono', monospace;
   }
 
-  .edu-item .edu-meta {
-    color: var(--muted-color);
-    font-size: 12px;
+  .post-category {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 2px 8px;
+    border-radius: 2px;
   }
 
-  .edu-item .edu-note {
-    font-size: 12.5px;
-    color: var(--muted-color);
+  .cat-hypervisor { color: var(--accent); background: rgba(232,255,71,0.08); border: 1px solid rgba(232,255,71,0.2); }
+  .cat-re { color: var(--accent2); background: rgba(71,255,204,0.08); border: 1px solid rgba(71,255,204,0.2); }
+  .cat-kernel { color: var(--accent3); background: rgba(255,71,87,0.08); border: 1px solid rgba(255,71,87,0.2); }
+  .cat-research { color: #b47fff; background: rgba(180,127,255,0.08); border: 1px solid rgba(180,127,255,0.2); }
+
+  .post-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--text-bright);
+    margin-bottom: 12px;
+    letter-spacing: -0.3px;
+    line-height: 1.3;
+    transition: color 0.2s;
   }
 
-  /* ── FOOTER ── */
-  .footer {
-    margin-top: 40px;
-    padding-top: 14px;
-    border-top: 1px solid var(--border-color);
-    font-size: 12px;
-    color: var(--muted-color);
-  }
+  .post-card:hover .post-title { color: var(--accent); }
 
-  .footer a { color: var(--link-color); text-decoration: none; }
-  .footer a:hover { text-decoration: underline; }
-
-  ul {
-    padding-left: 20px;
-    color: var(--muted-color);
+  .post-excerpt {
     font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.75;
+    margin-bottom: 16px;
+    max-width: 620px;
   }
 
-  ul li { margin-bottom: 3px; }
-
-  hr {
-    border: none;
-    border-top: 1px solid var(--border-color);
-    margin: 6px 0 16px;
+  .post-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 
+  .post-tags {
+    display: flex;
+    gap: 6px;
+  }
+
+  .post-tag {
+    font-size: 10px;
+    color: var(--text-dim);
+    padding: 2px 6px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    background: var(--bg3);
+  }
+
+  .read-more {
+    font-size: 11px;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s, gap 0.2s;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .post-card:hover .read-more {
+    color: var(--accent);
+    gap: 10px;
+  }
+
+  .read-more .arrow { transition: transform 0.2s; }
+  .post-card:hover .read-more .arrow { transform: translateX(3px); }
+
+  /* Series block */
+  .series-section {
+    padding: 36px 60px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg2);
+  }
+
+  .series-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 20px;
+  }
+
+  .series-card {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px;
+    background: var(--bg);
+    transition: all 0.2s;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .series-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transition: transform 0.2s;
+  }
+
+  .series-card:hover { border-color: var(--border2); background: var(--bg3); }
+  .series-card:hover::before { transform: scaleX(1); }
+
+  .series-card.cyan::before { background: var(--accent2); }
+
+  .series-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  .series-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--text-bright);
+    margin-bottom: 6px;
+    letter-spacing: -0.2px;
+  }
+
+  .series-parts {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 8px;
+  }
+
+  .series-progress {
+    height: 2px;
+    background: var(--border);
+    border-radius: 1px;
+    margin-top: 10px;
+    overflow: hidden;
+  }
+
+  .series-progress-bar {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 1px;
+    transition: width 0.5s ease;
+  }
+
+  .series-card.cyan .series-progress-bar { background: var(--accent2); }
+
+  /* Right column / terminal */
+  .terminal-block {
+    padding: 36px 60px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .terminal {
+    background: #0d0d10;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .terminal-bar {
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .terminal-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .td1 { background: #ff5f57; }
+  .td2 { background: #ffbd2e; }
+  .td3 { background: #28c840; }
+
+  .terminal-title {
+    font-size: 10px;
+    color: var(--text-dim);
+    margin-left: 6px;
+    letter-spacing: 0.05em;
+  }
+
+  .terminal-body {
+    padding: 16px;
+    font-size: 12px;
+    line-height: 1.8;
+    color: #8888aa;
+  }
+
+  .terminal-body .prompt { color: var(--accent); }
+  .terminal-body .cmd { color: var(--text-bright); }
+  .terminal-body .out { color: var(--text-dim); }
+  .terminal-body .str { color: var(--accent2); }
+  .terminal-body .kw { color: #ff79c6; }
+  .terminal-body .num { color: #bd93f9; }
+  .terminal-body .comment { color: #44475a; font-style: italic; }
+  .terminal-body .cursor {
+    display: inline-block;
+    width: 7px;
+    height: 14px;
+    background: var(--accent);
+    vertical-align: text-bottom;
+    animation: blink 1s step-end infinite;
+  }
+
+  /* Pagination */
+  .pagination {
+    padding: 24px 60px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .page-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    font-size: 12px;
+    color: var(--text-dim);
+    font-family: 'Space Mono', monospace;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: var(--bg2);
+  }
+
+  .page-btn:hover, .page-btn.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(232,255,71,0.05);
+  }
+
+  /* Mobile */
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .hero { padding: 40px 24px 32px; }
+    .section-header { padding: 20px 24px 14px; }
+    .post-card { padding: 28px 24px; }
+    .series-section { padding: 28px 24px; }
+    .series-grid { grid-template-columns: 1fr; }
+    .terminal-block { padding: 28px 24px; }
+    .pagination { padding: 20px 24px; }
+  }
+
+  /* Entry animation */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(12px);
+    animation: fadeUp 0.5s ease forwards;
+  }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .post-card:nth-child(1) { animation-delay: 0.05s; }
+  .post-card:nth-child(2) { animation-delay: 0.1s; }
+  .post-card:nth-child(3) { animation-delay: 0.15s; }
+  .post-card:nth-child(4) { animation-delay: 0.2s; }
+  .post-card:nth-child(5) { animation-delay: 0.25s; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
 </style>
 </head>
 <body>
 
-<div class="crt-vignette"></div>
+<div class="layout">
 
-<div class="content-wrapper">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="profile">
+      <div class="avatar-wrap">
+        <div class="avatar">0x</div>
+        <div class="avatar-status"></div>
+      </div>
+      <div class="profile-name">0xHandle</div>
+      <div class="profile-title">Security Research &amp; <span>RE</span></div>
+      <div class="profile-links">
+        <a href="https://github.com" target="_blank">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          GitHub
+        </a>
+        <a href="https://twitter.com" target="_blank">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          Twitter
+        </a>
+      </div>
+    </div>
 
-<button class="theme-toggle" id="themeToggle">[ dark ]</button>
+    <nav class="nav">
+      <div class="nav-section">
+        <span class="nav-label">Navigate</span>
+        <a class="nav-item active" href="index.html">
+          <span class="dot"></span> Home
+        </a>
+        <a class="nav-item" href="#">
+          <span class="dot"></span> About
+        </a>
+      </div>
 
-<!-- HEADER -->
-<div class="header">
-  <h1>They call me 0xGroot</h1>
-  <nav>
-    <a href="index.html">cd ~</a>
-    <a href="blog.html">cd ~/posts</a>
-    <a href="#">cd ~/resume</a>
-  </nav>
-</div>
+      <div class="nav-section">
+        <span class="nav-label">Series</span>
+        <a class="nav-item" href="#">
+          <span class="dot"></span> Virtualization
+        </a>
+        <div class="nav-sub">
+          <a class="nav-item" href="post-template.html">CPU Virtualization (VTx)</a>
+          <a class="nav-item" href="post-template.html">MMU Virtualization (EPT)</a>
+          <a class="nav-item" href="#">APIC Virtualization</a>
+        </div>
+        <a class="nav-item" href="#">
+          <span class="dot"></span> Reverse Engineering
+        </a>
+        <div class="nav-sub">
+          <a class="nav-item" href="#">Basic Architecture</a>
+          <a class="nav-item" href="#">The Stack</a>
+          <a class="nav-item" href="#">Assembly Deep Dive</a>
+        </div>
+        <a class="nav-item" href="#">
+          <span class="dot"></span> Kernel Research
+        </a>
+        <a class="nav-item" href="#">
+          <span class="dot"></span> Anti-Cheat/Anti-Debug
+        </a>
+      </div>
 
-<!-- WHOAMI -->
-<h2>$whoami<span class="cursor">_</span>
-<img src="favicon.gif" style="width:16px;height:16px;vertical-align:middle;margin-left:4px;">
-</h2>
-<p class="profile-text">
-  malware analyst &amp; reverse engineer. android and windows binaries mostly.
-  use frida to hook java and native code, ida pro + ghidra for static work, x64dbg
-  when i need to step through things. do dynamic analysis in isolated vm setups —
-  procmon, api monitor, wireshark, remnux, inetsim. found real bugs: 3 cves in
-  cpphttplib. actively hunting more. solved 6/10 at flare-on 2025. 
-  currently finishing msc in digital forensics &amp; information security in goa.
-  if it involves breaking things at the binary level, i'm interested.
-</p>
+      <div class="nav-section">
+        <span class="nav-label">Links</span>
+        <a class="nav-item" href="#" target="_blank">
+          <span class="dot"></span> Secret Club
+        </a>
+        <a class="nav-item" href="#" target="_blank">
+          <span class="dot"></span> Research Blog
+        </a>
+      </div>
+    </nav>
 
-<!-- SKILLS -->
-<h2>$skills<span class="cursor">_</span></h2>
-<hr>
+    <div class="sidebar-footer">
+      <div>Built with <span class="version">01</span> brain cells</div>
+      <div style="margin-top:2px;">© 2024 — 0xHandle</div>
+    </div>
+  </aside>
 
-<div class="skill-group">
-  <div class="skill-group-label">// android re</div>
-  <div class="tags">
-    <span class="tag hot">Frida</span>
-    <span class="tag hot">apktool</span>
-    <span class="tag hot">jadx-gui</span>
-    <span class="tag">Java hooking</span>
-    <span class="tag">Native (C++) hooking</span>
-    <span class="tag">Memory tracing</span>
-    <span class="tag">APK analysis</span>
-  </div>
-</div>
+  <!-- MAIN CONTENT -->
+  <main class="main">
 
-<div class="skill-group">
-  <div class="skill-group-label">// windows re</div>
-  <div class="tags">
-    <span class="tag hot">IDA Pro</span>
-    <span class="tag hot">Ghidra</span>
-    <span class="tag">x64dbg</span>
-    <span class="tag">Binary Ninja</span>
-    <span class="tag">WinDbg</span>
-    <span class="tag">PE / DLL</span>
-    <span class="tag">x86_64 ASM</span>
-  </div>
-</div>
+    <!-- Hero -->
+    <section class="hero fade-in">
+      <div class="hero-eyebrow">Security Research Blog</div>
+      <h1 class="hero-title">
+        Bugs, hypervisors,<br>
+        <span class="accent">&amp; reverse</span> <span class="dim">engineering.</span>
+      </h1>
+      <p class="hero-desc">
+        Deep technical research on Windows internals, hypervisor development,
+        kernel exploitation, and low-level systems programming. No hand-holding,
+        all signal.
+      </p>
+      <div class="hero-tags">
+        <span class="tag accent">Intel VT-x</span>
+        <span class="tag cyan">EPT / MMU</span>
+        <span class="tag red">PatchGuard</span>
+        <span class="tag">x86-64</span>
+        <span class="tag">Windows Kernel</span>
+        <span class="tag">Anti-Cheat</span>
+        <span class="tag">Hooking</span>
+      </div>
+    </section>
 
-<div class="skill-group">
-  <div class="skill-group-label">// malware analysis</div>
-  <div class="tags">
-    <span class="tag hot">Procmon</span>
-    <span class="tag hot">API Monitor</span>
-    <span class="tag">Wireshark</span>
-    <span class="tag">TCPView</span>
-    <span class="tag">REMnux</span>
-    <span class="tag">Inetsim</span>
-    <span class="tag">VMware / VBox</span>
-  </div>
-</div>
+    <!-- Terminal snippet -->
+    <div class="terminal-block fade-in">
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="terminal-dot td1"></div>
+          <div class="terminal-dot td2"></div>
+          <div class="terminal-dot td3"></div>
+          <span class="terminal-title">ept_init.c — hypervisor research</span>
+        </div>
+        <div class="terminal-body">
+          <div><span class="comment">// Enable EPT with execute-only support check</span></div>
+          <div><span class="kw">NTSTATUS</span> EptInitialize(<span class="kw">PVMM_CONTEXT</span> Ctx) {</div>
+          <div>&nbsp;&nbsp;<span class="kw">IA32_VMX_EPT_VPID_CAP</span> Cap = { <span class="num">0</span> };</div>
+          <div>&nbsp;&nbsp;Cap.AsUInt = __readmsr(<span class="str">IA32_VMX_EPT_VPID_CAP</span>);</div>
+          <div>&nbsp;&nbsp;<span class="kw">if</span> (!Cap.PageWalkLength4) {</div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span> <span class="str">STATUS_NOT_SUPPORTED</span>;</div>
+          <div>&nbsp;&nbsp;}</div>
+          <div>&nbsp;&nbsp;<span class="comment">// Build identity-mapped 4-level EPT hierarchy</span></div>
+          <div>&nbsp;&nbsp;<span class="kw">return</span> EptBuildPassthrough(Ctx-&gt;Ept);</div>
+          <div>}<span class="cursor"></span></div>
+        </div>
+      </div>
+    </div>
 
-<div class="skill-group">
-  <div class="skill-group-label">// exploitation</div>
-  <div class="tags">
-    <span class="tag hot">Buffer Overflow</span>
-    <span class="tag hot">ROP Chains</span>
-    <span class="tag">ret2libc / ret2win</span>
-    <span class="tag">Heap UAF</span>
-    <span class="tag">Memory Corruption</span>
-  </div>
-</div>
+    <!-- Posts section -->
+    <div class="section-header">
+      <span class="section-title">Latest Posts</span>
+      <span class="section-count">10 articles</span>
+    </div>
 
-<div class="skill-group">
-  <div class="skill-group-label">// programming</div>
-  <div class="tags">
-    <span class="tag hot">C / C++</span>
-    <span class="tag hot">x86_64 ASM</span>
-    <span class="tag">Python</span>
-    <span class="tag">Linux internals</span>
-    <span class="tag">Windows internals</span>
-  </div>
-</div>
+    <div class="posts">
 
-<!-- CVEs -->
-<h2>$cve<span class="cursor">_</span></h2>
-<hr>
-<div class="cve-list">
-  <div class="cve">CVE-2026-28434<small>cpphttplib</small></div>
-  <div class="cve">CVE-2026-31870<small>cpphttplib</small></div>
-  <div class="cve">CVE-2026-32627<small>cpphttplib</small></div>
-</div>
+      <article class="post-card fade-in" onclick="window.location='post-template.html'">
+        <div class="post-meta">
+          <span class="post-date">2026-04-03</span>
+          <span class="post-category cat-re">Reverse Engineering</span>
+        </div>
+        <h2 class="post-title">Applied RE: Crude T&E for Control-Flow Tracing</h2>
+        <p class="post-excerpt">
+          Inducing faults with sentinels by patching code sections at runtime predates most of us — one of the oldest tricks in systems programming. Single-stepping via the trap flag dates to the 8086. Here's a practical guide to control-flow tracing using fault injection.
+        </p>
+        <div class="post-footer">
+          <div class="post-tags">
+            <span class="post-tag">x64</span>
+            <span class="post-tag">windows-11</span>
+            <span class="post-tag">usermode</span>
+          </div>
+          <span class="read-more">Read more <span class="arrow">→</span></span>
+        </div>
+      </article>
 
-<!-- HIGHLIGHTS -->
-<h2>$highlights<span class="cursor">_</span></h2>
-<hr>
+      <article class="post-card fade-in" onclick="window.location='post-template.html'">
+        <div class="post-meta">
+          <span class="post-date">2024-02-16</span>
+          <span class="post-category cat-kernel">Windows Kernel</span>
+        </div>
+        <h2 class="post-title">Experimenting with Object Initializers in Windows</h2>
+        <p class="post-excerpt">
+          An alternative to Windows Object Callbacks using unconventional object initialization techniques. Useful for monitoring tools that need signed-module-equivalent access without going through the standard callback registration paths.
+        </p>
+        <div class="post-footer">
+          <div class="post-tags">
+            <span class="post-tag">patchguard</span>
+            <span class="post-tag">kernel</span>
+            <span class="post-tag">x64</span>
+          </div>
+          <span class="read-more">Read more <span class="arrow">→</span></span>
+        </div>
+      </article>
 
-<div class="post">
-  <div class="post-meta">2025 | CTF</div>
-  <div class="post-title">Flare-ON 2025 — 6 / 10 solved</div>
-  <p>Mandiant's yearly RE CTF. Crackmes, packed binaries, obfuscated samples. Worked through 6 of 10 using IDA, x64dbg, and a lot of patience.</p>
-</div>
+      <article class="post-card fade-in" onclick="window.location='post-template.html'">
+        <div class="post-meta">
+          <span class="post-date">2023-11-25</span>
+          <span class="post-category cat-kernel">Kernel</span>
+        </div>
+        <h2 class="post-title">Fun with a PatchGuard-Compliant Hook</h2>
+        <p class="post-excerpt">
+          An alternative to InfinityHook discovered following the patching of EtwpGetCycleCount by Microsoft. Tested from early Windows 10 to the latest release. Details the hooking mechanism, constraints, and how to stay compliant with PG's integrity checks.
+        </p>
+        <div class="post-footer">
+          <div class="post-tags">
+            <span class="post-tag">hooking</span>
+            <span class="post-tag">patchguard</span>
+            <span class="post-tag">windows-10</span>
+          </div>
+          <span class="read-more">Read more <span class="arrow">→</span></span>
+        </div>
+      </article>
 
-<div class="post">
-  <div class="post-meta">2025–2026 | Android RE</div>
-  <div class="post-title">Android hooking with Frida</div>
-  <p>Hooked Java methods and native C++ code at runtime to trace memory, bypass checks, and analyse app behaviour. apktool + jadx for static, Frida for everything dynamic.</p>
-</div>
+      <article class="post-card fade-in" onclick="window.location='post-template.html'">
+        <div class="post-meta">
+          <span class="post-date">2023-03-10</span>
+          <span class="post-category cat-hypervisor">Hypervisors</span>
+        </div>
+        <h2 class="post-title">Evading ACPI Checks in Commercial Virtualization Platforms</h2>
+        <p class="post-excerpt">
+          Dozens of VM detection checks appear across open-source projects — drivers, devices, processes, registry entries, timing attacks. Most are trivially mitigated. This covers the ACPI-specific ones and how commercial platforms can be fingerprinted and evaded.
+        </p>
+        <div class="post-footer">
+          <div class="post-tags">
+            <span class="post-tag">hypervisor</span>
+            <span class="post-tag">evasion</span>
+            <span class="post-tag">acpi</span>
+          </div>
+          <span class="read-more">Read more <span class="arrow">→</span></span>
+        </div>
+      </article>
 
-<div class="post">
-  <div class="post-meta">2025–2026 | Windows RE</div>
-  <div class="post-title">PE / DLL analysis & process memory</div>
-  <p>Regular work on Windows binaries — import tables, DLL injection, in-process memory reads. IDA Pro and x64dbg for stepping through execution and finding suspicious patterns.</p>
-</div>
+      <article class="post-card fade-in" onclick="window.location='post-template.html'">
+        <div class="post-meta">
+          <span class="post-date">2022-01-31</span>
+          <span class="post-category cat-hypervisor">Hypervisors</span>
+        </div>
+        <h2 class="post-title">MMU Virtualization via Intel EPT: Implementation — Part 1</h2>
+        <p class="post-excerpt">
+          Covers requirements and features for MMU virtualization via Intel EPT. Initialization and capability checking, MTRR setup, page splitting, and passthrough identity mapping. Full structure definitions and a working EPT base by the end.
+        </p>
+        <div class="post-footer">
+          <div class="post-tags">
+            <span class="post-tag">ept</span>
+            <span class="post-tag">x64</span>
+            <span class="post-tag">intel</span>
+          </div>
+          <span class="read-more">Read more <span class="arrow">→</span></span>
+        </div>
+      </article>
 
-<div class="post">
-  <div class="post-meta">2026 | Bug Research</div>
-  <div class="post-title">3 CVEs in cpphttplib — independent research</div>
-  <p>Found three bugs in cpphttplib through source auditing and manual testing. All confirmed and published. Actively hunting more across open-source projects.</p>
-</div>
+    </div>
 
-<!-- EDUCATION -->
-<h2>$education<span class="cursor">_</span></h2>
-<hr>
+    <!-- Series section -->
+    <div class="section-header" style="margin-top:0;">
+      <span class="section-title">Series</span>
+      <span class="section-count">2 active</span>
+    </div>
 
-<div class="edu-item">
-  <div class="edu-title">MSc Digital Forensics &amp; Information Security</div>
-  <div class="edu-meta">2024 – present · Goa Campus</div>
-  <div class="edu-note">Forensics, malware analysis, infosec. Doing independent vuln research alongside coursework.</div>
-</div>
+    <section class="series-section">
+      <div class="series-grid">
+        <div class="series-card" onclick="window.location='post-template.html'">
+          <div class="series-num">SERIES 01</div>
+          <div class="series-name">Intel VMX & Hypervisor Development</div>
+          <p style="font-size:12px; color:var(--text-dim); line-height:1.6;">
+            CPU virtualization, EPT/MMU virtualization, APIC virtualization — build a full type-2 hypervisor from scratch.
+          </p>
+          <div class="series-parts">7 parts · EPT series complete</div>
+          <div class="series-progress">
+            <div class="series-progress-bar" style="width: 70%"></div>
+          </div>
+        </div>
 
-<div class="edu-item">
-  <div class="edu-title">Bachelor of Computer Applications (BCA)</div>
-  <div class="edu-meta">Goa</div>
-  <div class="edu-note">Core CS — networking, programming, systems. Started getting into low-level stuff here.</div>
-</div>
+        <div class="series-card cyan" onclick="window.location='post-template.html'">
+          <div class="series-num">SERIES 02</div>
+          <div class="series-name">Applied Reverse Engineering</div>
+          <p style="font-size:12px; color:var(--text-dim); line-height:1.6;">
+            Architecture fundamentals, the stack, exceptions, accelerated assembly, ROP, hooking techniques and more.
+          </p>
+          <div class="series-parts">10 parts · ongoing</div>
+          <div class="series-progress">
+            <div class="series-progress-bar" style="width: 50%"></div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-<div class="edu-item">
-  <div class="edu-title">12th — Computer Science</div>
-  <div class="edu-meta">Seciren</div>
-</div>
+    <!-- Pagination -->
+    <div class="pagination">
+      <div class="page-btn active">1</div>
+      <div class="page-btn">2</div>
+      <div class="page-btn">3</div>
+      <div class="page-btn">4</div>
+      <div class="page-btn" style="width:auto; padding: 0 10px; font-size:11px;">Next →</div>
+    </div>
 
-<!-- TOPICS -->
-<h2>TOPICS</h2>
-<ul>
-  <li>Android &amp; Windows malware reverse engineering</li>
-  <li>x86-64 Assembly &amp; Architecture</li>
-  <li>Memory corruption bugs &amp; exploitation</li>
-  <li>Dynamic analysis &amp; sandboxing</li>
-  <li>Vulnerability research &amp; CVE writing</li>
-</ul>
-
-<!-- FOOTER -->
-<div class="footer">
-  <p>0xGroot · resume | <a href="https://github.com/0x3xploit">github</a> | <a href="https://www.youtube.com/@0x3xploit">youtube</a></p>
-</div>
-
+  </main>
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
+  // Animate posts on scroll
+  const cards = document.querySelectorAll('.post-card, .series-card');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
 
-  // ── Blinking tab title — exact from your site
-  const originalTitle = document.title;
-  setInterval(() => {
-    document.title = document.title === originalTitle ? originalTitle + ' ▌' : originalTitle;
-  }, 500);
-
-  // ── Dark mode toggle — exact from your site
-  const themeToggle = document.getElementById('themeToggle');
-  const body = document.body;
-
-  const currentTheme = localStorage.getItem('theme') || 'light';
-  if (currentTheme === 'dark') {
-    body.classList.add('dark-mode');
-    themeToggle.textContent = '[ light ]';
-  }
-
-  themeToggle.addEventListener('click', () => {
-    body.classList.toggle('dark-mode');
-    if (body.classList.contains('dark-mode')) {
-      themeToggle.textContent = '[ light ]';
-      localStorage.setItem('theme', 'dark');
-    } else {
-      themeToggle.textContent = '[ dark ]';
-      localStorage.setItem('theme', 'light');
-    }
+  cards.forEach(c => {
+    c.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+    observer.observe(c);
   });
 
-  // ── Favicon swap on tab focus/blur — keeps favicon.gif alive
-  const favicon = document.querySelector("link[rel='icon']");
-  document.addEventListener('visibilitychange', () => {
-    favicon.href = document.hidden ? 'favicon.gif' : 'favicon.gif';
+  // Active nav on scroll
+  document.querySelectorAll('.page-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.page-btn').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+    });
   });
 
-});
+  // Terminal typing effect
+  const cursor = document.querySelector('.cursor');
 </script>
 </body>
 </html>
