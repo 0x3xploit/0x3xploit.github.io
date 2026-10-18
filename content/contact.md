@@ -5,11 +5,10 @@
 
 ## transmission
 
-Open for research collabs, CTF teams, and interesting bugs.
+Open for research collabs and interesting bugs.
 
 ```links
 GitHub      | github.com/0x3xploit | https://github.com/0x3xploit
-Twitter / X | @0x3xploit           | #
-LinkedIn    | /in/yourprofile      | #
-Email       | you@proton.me        | #
+LinkedIn    | linkedin.com/in/prathamnaik | https://www.linkedin.com/in/prathamnaik/     | #
+Email       | naikpratham1212@gmail.com        | #
 ```

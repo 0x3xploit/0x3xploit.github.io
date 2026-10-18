@@ -16,23 +16,8 @@
 
 ## whoami
 
-MSc in **Digital Forensics & Information Security** (DFIS). Cybersecurity intern at a cyber-cell unit in India. My work spans pentesting, malware analysis, digital forensics and research.
-
-By night: Android VRP hunting, CTF pwn/RE, and small binary-analysis tools. I take things apart to understand how they really work — then write it up.
-
-## stat points
-
-```skills
-Reverse Engineering         95
-Binary Exploitation / pwn   90
-Exploit Development         85
-Malware Analysis            88
-Android Security            84
-Digital Forensics           86
-Python / pwntools           92
-ASM (x86 / x64 / ARM)       87
-```
-
+Myself Pratham Naik aka 0xGroot i am security researcher I explore software internals, reverse engineer binaries, 
+analyze native Android, windows applications, and investigate vulnerabilities.
 ## toolkit
 
 ```tags

@@ -7,28 +7,51 @@
   THE ENTRIES BELOW ARE EXAMPLES — replace them with the events you played.
 -->
 
-## Example Jeopardy CTF 2026
-- date: 2026-09
-- team: your-team
-- rank: 12 / 450
+## H7CTF 2026 Quals
+- date: 2026-09-26
+- team: pwn0rDi3
+- rank: 1 / 722
 - format: Jeopardy
 - focus: pwn, rev
-- writeup: #/blog/ret2libc-on-a-stripped-binary
 
-Notes for this event: the challenge you liked most, what broke, what you learned.
-
-## Example University CTF
-- date: 2026-03
-- team: your-team
-- rank: 3 / 220
+## SunshineCTF 2026
+- date: 2026-09-26
+- team: pwn0rDi3
+- rank: 10 / 758
 - format: Jeopardy
 - focus: rev, forensics
 
-Podium finishes get a bronze / silver / gold rank color automatically.
+## CSS CTF 2026: Return of Nexus
+- date: 2026-09-30
+- team: pwn0rDi3
+- rank: 15 / 799
+- format: Jeopardy
+- focus: pwn, rev
 
-## Example Attack-Defense
-- date: 2025-11
-- team: your-team
-- rank: 41 / 1200
-- format: Attack-Defense
-- focus: pwn
+## FortID CTF 2026
+- date: 2026-10-09
+- team: pwn0rDi3
+- rank: 10 / 664
+- format: Jeopardy
+- focus: pwn, rev
+
+## kBxAc CTF 2026
+- date: 2026-10-10
+- team: pwn0rDi3
+- rank: 37 / 290
+- format: Jeopardy
+- focus: pwn, rev
+
+## Cryovault 2026 Quals
+- date: 2026-10-10
+- team: pwn0rDi3
+- rank: 144 / 419
+- format: Jeopardy 
+- focus: pwn, rev
+
+## FooBar CTF 2026
+- date: 2026-10-10
+- team: pwn0rDi3
+- rank: 13 / 107
+- format: Jeopardy 
+- focus: pwn, rev
